@@ -1,6 +1,10 @@
 # bazaar-backend
 Clone the Repo https://github.com/DipanshuJ/bazaar-backend.git
 
+Run database/db.sql file in your local System
+
+Set you DB configuration in config/config.env file
+
 Install dependencies by command $ npm i
 
 Run command $npm start to run server at 8005
