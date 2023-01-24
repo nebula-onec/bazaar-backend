@@ -28,3 +28,4 @@ This is admin restricted API- You need to login to access this api
 @type- Post
 @body- name, price, description, stock
 url: "api/v1/admin/createproduct"
+;
