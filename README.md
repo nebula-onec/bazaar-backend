@@ -1,7 +1,7 @@
 # bazaar-backend
 Clone the Repo https://github.com/DipanshuJ/bazaar-backend.git
-Install dependencies by command npm i
-Run command npm start to run server at 8005
+Install dependencies by command $ npm i
+Run command $npm start to run server at 8005
 
 
 Here is the list of api endpoints, I have developed-
@@ -28,4 +28,4 @@ This is admin restricted API- You need to login to access this api
 @type- Post
 @body- name, price, description, stock
 url: "api/v1/admin/createproduct"
-;
+
