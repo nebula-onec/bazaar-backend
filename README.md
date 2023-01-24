@@ -8,16 +8,12 @@ Run command $npm start to run server at 8005
 
 Here is the list of api endpoints, I have developed-
 
-@name- login API
-
-@type- Post
-
-@body- email and password // email="adarshrawat.run@gmail.com", password="12345678"
+1) @name- login API, @type- Post, @body- email and password // email="adarshrawat.run@gmail.com", password="12345678"
 
 url: "/api/v1/admin/login" 
 
 
-@name- logout API
+2) @name- logout API
 
 @type- get
 
