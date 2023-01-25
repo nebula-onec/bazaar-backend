@@ -27,7 +27,7 @@ CREATE TABLE address(
     city 		VARCHAR(50) NOT NULL,
     state		VARCHAR(50) NOT NULL,
     country 	VARCHAR(50) NOT NULL,
-    zipcode 	DECIMAL(5) NOT NULL,
+    zipcode 	DECIMAL(6) NOT NULL,
     phone 		VARCHAR(20) NOT NULL,
 	CONSTRAINT address_user_id_fk FOREIGN KEY ( user_id )
         REFERENCES user ( user_id )
@@ -57,29 +57,25 @@ CREATE TABLE product_image (
     PRIMARY KEY  ( product_id, image_url )
 );
 
-CREATE TABLE payment_option(
-	payment_id 	INT PRIMARY KEY AUTO_INCREMENT,
-    desciption 	VARCHAR(200) NOT NULL
-);
+-- CREATE TABLE payment_option(
+-- 	payment_id 	INT PRIMARY KEY AUTO_INCREMENT,
+--     desciption 	VARCHAR(200) NOT NULL
+-- );
 
 
 CREATE TABLE user_order(
     order_id              INT PRIMARY KEY AUTO_INCREMENT,
-    buyer_id              INT ,
+    buyer_id              INT,
     address_id 			  INT NOT NULL,
-    payment_id 			  INT NOT NULL,
     total_price           DECIMAL(10, 2) NOT NULL,
     shipping_price        DECIMAL(4, 2) NOT NULL,
     order_date            DATETIME DEFAULT CURRENT_TIMESTAMP,
-    shipping_date         DATETIME ,
+    shipping_date         DATETIME,
     delievered_date		  DATETIME,
     order_status          DECIMAL(1) DEFAULT 1,
     CONSTRAINT user_order_buyer_id_fk FOREIGN KEY ( buyer_id )
         REFERENCES user ( user_id )
 		ON DELETE SET NULL ON UPDATE CASCADE,
-	CONSTRAINT user_order_payment_id_fk FOREIGN KEY ( payment_id )
-        REFERENCES payment_option ( payment_id )
-		ON DELETE NO ACTION ON UPDATE CASCADE,
 	CONSTRAINT user_order_address_id_fk FOREIGN KEY ( address_id )
         REFERENCES address ( address_id )
 		ON DELETE NO ACTION ON UPDATE CASCADE
@@ -105,5 +101,19 @@ CREATE TABLE order_product (
 
 
 insert into product (name, price, description, stock) values ("Samsung Galaxy M13", 14500, "This is Samsung Smartphone", 100), 
-("Samsung Galaxy S22", 35000, "This is FlagShip Smartphone", 100)
- 
+("Samsung Galaxy S22", 35000, "This is FlagShip Smartphone", 100);
+
+insert into user (name, email, password) values ('Karik', 'kartik@gmail.com', '12345678'),
+('Akshat Kotwalla', 'akshat@gmail.com', '12345678'),
+('Tanish Jain', 'tanish@gmail.com', '12345678');
+
+insert into address (user_id, street1, city, state, country, zipcode, phone) values
+(1, "Murai Mohalla", 'Indore', 'Madhya Pradesh', 'India', 45120, '2145789632'),
+(2, "Choti Gwaltoli", "Bhopal", "Madhya Pradesh", "India", 45470, '2222244444'),
+(3, "Teen Imli", "Patna", "Bihar", 'India', 45810, '3333355555');
+
+
+ insert into user_order (buyer_id, address_id, total_price, shipping_price) values 
+ (1, 1, 4500, 50),
+ (1, 1, 4000, 50),
+ (3, 3, 50000, 50);
