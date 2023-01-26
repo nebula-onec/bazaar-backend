@@ -100,8 +100,7 @@ CREATE TABLE order_product (
 
 
 
-insert into product (name, price, description, stock) values ("Samsung Galaxy M13", 14500, "This is Samsung Smartphone", 100), 
-("Samsung Galaxy S22", 35000, "This is FlagShip Smartphone", 100);
+INSERT INTO `product` VALUES (1,'Samsung Galaxy M13',14500.00,NULL,'This is Samsung Smartphone',100),(2,'Samsung Galaxy S22',35000.00,NULL,'This is FlagShip Smartphone',100),(3,'IPhone14',120000.00,NULL,'This is Iphone ',500),(4,'IPhone1',100000.00,NULL,'This is Iphone ',400),(5,'IPhone12',100000.00,NULL,'This is Iphone ',300),(6,'IPhone12',100000.00,NULL,'This is Iphone ',250),(7,'Bucket',100.00,NULL,NULL,500);
 
 insert into user (name, email, password) values ('Karik', 'kartik@gmail.com', '12345678'),
 ('Akshat Kotwalla', 'akshat@gmail.com', '12345678'),
@@ -113,7 +112,5 @@ insert into address (user_id, street1, city, state, country, zipcode, phone) val
 (3, "Teen Imli", "Patna", "Bihar", 'India', 45810, '3333355555');
 
 
- insert into user_order (buyer_id, address_id, total_price, shipping_price) values 
- (1, 1, 4500, 50),
- (1, 1, 4000, 50),
- (3, 3, 50000, 50);
+ INSERT INTO `user_order` VALUES (4,1,1,114500.00,50.00,'2023-01-25 12:07:38',NULL,NULL,3),(5,1,1,100000.00,50.00,'2023-01-25 12:07:38',NULL,NULL,1),(6,3,3,240000.00,50.00,'2023-01-25 12:07:38',NULL,NULL,1);
+ INSERT INTO `order_product` VALUES (4,1,1,14500),(4,4,1,100000),(5,5,1,100000),(6,3,2,240000);
