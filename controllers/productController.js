@@ -27,8 +27,18 @@ exports.createProduct = catchAsyncError( async (req, res, next) => {
         name, price, description, stock
     }
     await dbInsertQuery(`INSERT INTO product SET ? `, product , dbName);
-    return res.json({
+    res.status(200).json({
         success: true,
-        message: "Product created Successfully"
+        message: "Product Created successfully!"
+    });
+});
+
+exports.deleteProduct = catchAsyncError( async(req, res, next)=>{
+    const { product_id } = req.body;
+    const dbName = 'client' + req.user.id;
+    await dbQuery(`delete from product where product_id = ${product_id}`, dbName);
+    res.status(200).json({
+        success: true,
+        message: "Product Deleted successfully!"
     });
 });
