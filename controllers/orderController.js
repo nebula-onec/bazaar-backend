@@ -1,4 +1,5 @@
 const catchAsyncError = require("../middleware/catchAsyncError");
+const dbInsertQuery = require("../utils/dbInsertQuery");
 const dbQuery = require("../utils/dbQuery");
 
 
@@ -71,8 +72,29 @@ exports.getPendingOrders = catchAsyncError( async(req, res, next)=>{
     });
 });
 
-exports.changeOrderStatus = catchAsyncErro( async(req, res, next)=>{
-
+exports.changeOrderStatus = catchAsyncError( async(req, res, next)=>{
+    const dbName = 'client'+req.user.id;
+    const {order_id, new_status} = req.body;
+    if(!order_id || !new_status){
+        return res.status(206).json({
+            success: false,
+            message: "Please give Full Details"
+        });
+    }
+    const order = (await dbQuery(`select order_status from user_order where order_id = ${order_id}`, dbName))[0];
+    if(order.order_status == 0 ){
+        return res.status(401).json({
+            success: false,
+            message: "Cancelled Order's Status can't be Updated"
+        });
+    }
+    const result = await dbInsertQuery(`Update user_order SET order_status = ? WHERE order_id = ?`, [new_status, order_id], dbName);
+    res.status(200).json({
+        success: true,
+        message: "Order Status Updated successfully!"
+    });
 });
+
+
 
 // SELECT * FROM customers ORDER BY last_name, first_name LIMIT 10 OFFSET 20;
