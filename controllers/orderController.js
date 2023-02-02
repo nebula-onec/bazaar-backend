@@ -41,6 +41,37 @@ exports.getOrderDetails = catchAsyncError( async(req, res, next) => {
 });
 
 
+exports.getSingleOrderDetails = catchAsyncError( async(req, res, next)=>{
+    const dbName = 'client'+req.user.id;
+    const id = req.params.id;
+
+    const result = (await dbQuery(`select * from user_order where order_id = ${id}`, dbName));
+    if(!result[0]){
+        return res.status(404).json({
+            success: false,
+            message: "Order Not Found"
+        })
+    }
+    order = result[0];
+    const address = await dbQuery(`select address_id, street1, street2, city, state, country, zipcode, phone from address where address_id = ${order.address_id}`, dbName);
+    delete order.address_id;
+    order.address = address;
+
+    const user = await dbQuery(`select name from user where user_id = ${order.buyer_id}`, dbName);
+    order.user = {user_id: order.buyer_id, name: user[0].name};
+    delete order.buyer_id;
+
+    const products = await dbQuery(`select order_product.product_id, order_product.quantity, order_product.price, product.name from order_product JOIN product ON order_product.product_id = product.product_id where order_product.order_id = ${order.order_id}`, dbName);
+    
+    order.products = products;
+
+    res.status(200).json({
+        success: true,
+        order
+    });
+});
+
+
 exports.getPendingOrders = catchAsyncError( async(req, res, next)=>{
     const dbName = 'client'+req.user.id;
     const orders = await dbQuery(`select order_id, order_status from user_order where order_status!=3`, dbName);

@@ -5,7 +5,7 @@ const dbQuery = require("../utils/dbQuery");
 exports.isAuthenticatedAdmin = catchAsyncError(async (req, res, next) => {
 
   const { token } = req.cookies;
-
+  
   if (!token) {
     return res.status(401).json({ success: false, message: "Please Login to access this resource" });
   }
