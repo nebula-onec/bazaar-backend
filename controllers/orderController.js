@@ -53,12 +53,13 @@ exports.getSingleOrderDetails = catchAsyncError( async(req, res, next)=>{
         })
     }
     order = result[0];
-    const address = await dbQuery(`select address_id, street1, street2, city, state, country, zipcode, phone from address where address_id = ${order.address_id}`, dbName);
+    const address = await dbQuery(`select address_id, street1, street2, city, zipcode from address where address_id = ${order.address_id}`, dbName);
     delete order.address_id;
-    order.address = address;
+    // order.address=address;
+    order.address = [{address_id:address[0].address_id,Line1:address[0].street1,city:address[0].city,zipcode:address[0].zipcode}];
 
-    const user = await dbQuery(`select name from user where user_id = ${order.buyer_id}`, dbName);
-    order.user = {user_id: order.buyer_id, name: user[0].name};
+    const user = await dbQuery(`select name,phone from user where user_id = ${order.buyer_id}`, dbName);
+    order.user = {user_id: order.buyer_id, name: user[0].name,phone:user[0].phone};
     delete order.buyer_id;
 
     const products = await dbQuery(`select order_product.product_id, order_product.quantity, order_product.price, product.name from order_product JOIN product ON order_product.product_id = product.product_id where order_product.order_id = ${order.order_id}`, dbName);

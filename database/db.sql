@@ -25,10 +25,8 @@ CREATE TABLE address(
     street1 	VARCHAR(255) NOT NULL,
     street2 	VARCHAR(255),
     city 		VARCHAR(50) NOT NULL,
-    state		VARCHAR(50) NOT NULL,
-    country 	VARCHAR(50) NOT NULL,
+    
     zipcode 	DECIMAL(6) NOT NULL,
-    phone 		VARCHAR(20) NOT NULL,
 	CONSTRAINT address_user_id_fk FOREIGN KEY ( user_id )
         REFERENCES user ( user_id )
 		ON DELETE CASCADE ON UPDATE CASCADE
@@ -51,11 +49,7 @@ CREATE TABLE product (
 		ON DELETE CASCADE ON UPDATE CASCADE
 );
 
-CREATE TABLE product_image (
-    product_id   INT,
-    image_url    VARCHAR(255),
-    PRIMARY KEY  ( product_id, image_url )
-);
+
 
 -- CREATE TABLE payment_option(
 -- 	payment_id 	INT PRIMARY KEY AUTO_INCREMENT,
@@ -99,17 +93,36 @@ CREATE TABLE order_product (
 );
 
 
+DROP TABLE `client1`.`product_image`;
+
+ALTER TABLE `client1`.`product` 
+ADD COLUMN `image_url` VARCHAR(255) NOT NULL AFTER `stock`
+
+
+ALTER TABLE `client1`.`user` 
+ADD COLUMN `phone` VARCHAR(20) NOT NULL AFTER `name`;
+
+
+ALTER TABLE `client1`.`address` 
+DROP COLUMN `country`,
+DROP COLUMN `state`;
+
 
 INSERT INTO `product` VALUES (1,'Samsung Galaxy M13',14500.00,NULL,'This is Samsung Smartphone',100),(2,'Samsung Galaxy S22',35000.00,NULL,'This is FlagShip Smartphone',100),(3,'IPhone14',120000.00,NULL,'This is Iphone ',500),(4,'IPhone1',100000.00,NULL,'This is Iphone ',400),(5,'IPhone12',100000.00,NULL,'This is Iphone ',300),(6,'IPhone12',100000.00,NULL,'This is Iphone ',250),(7,'Bucket',100.00,NULL,NULL,500);
 
-insert into user (name, email, password) values ('Karik', 'kartik@gmail.com', '12345678'),
+insert into user (name, email, password) values ('Karik','kartik@gmail.com', '12345678'),
 ('Akshat Kotwalla', 'akshat@gmail.com', '12345678'),
 ('Tanish Jain', 'tanish@gmail.com', '12345678');
 
-insert into address (user_id, street1, city, state, country, zipcode, phone) values
-(1, "Murai Mohalla", 'Indore', 'Madhya Pradesh', 'India', 45120, '2145789632'),
-(2, "Choti Gwaltoli", "Bhopal", "Madhya Pradesh", "India", 45470, '2222244444'),
-(3, "Teen Imli", "Patna", "Bihar", 'India', 45810, '3333355555');
+UPDATE `client1`.`user` SET `phone` = '8658991924' WHERE (`user_id` = '1');
+UPDATE `client1`.`user` SET `phone` = '2345678901' WHERE (`user_id` = '2');
+UPDATE `client1`.`user` SET `phone` = '3456789021' WHERE (`user_id` = '3');
+
+
+insert into address (user_id, street1, city, zipcode) values
+(1, "Murai Mohalla", 'Indore', 45120),
+(2, "Choti Gwaltoli", "Bhopal", 45470),
+(3, "Teen Imli", "Patna", 45810);
 
 
  INSERT INTO `user_order` VALUES (4,1,1,114500.00,50.00,'2023-01-25 12:07:38',NULL,NULL,3),(5,1,1,100000.00,50.00,'2023-01-25 12:07:38',NULL,NULL,1),(6,3,3,240000.00,50.00,'2023-01-25 12:07:38',NULL,NULL,1);
