@@ -4,6 +4,7 @@ use master;
 create table user(
     id INT PRIMARY KEY AUTO_INCREMENT,
     email varchar(255) UNIQUE,
+    phone varchar(20),
     password varchar(1024) NOT NULL
 );
 
@@ -12,11 +13,21 @@ INSERT INTO user VALUES (1, 'adarshrawat.run@gmail.com', '12345678');
 create database client1;
 use client1;
 
+create table home(
+    no_of_orders INT,
+    no_of_pending_orders INT,
+    no_of_customers INT,
+    no_of_products INT,
+    unavailable_products INT,
+    no_of_product_sold INT
+);
+
 CREATE TABLE user(
 	user_id 	INT PRIMARY KEY AUTO_INCREMENT,
     name 		VARCHAR(255) NOT NULL,
     email 		VARCHAR(255) NOT NULL UNIQUE,
-    password 	VARCHAR(255) NOT NULL
+    password 	VARCHAR(255) NOT NULL,
+    phone varchar(255) NOT NUll,
 );
 
 CREATE TABLE address(
