@@ -39,6 +39,6 @@ exports.deleteProduct = catchAsyncError( async(req, res, next)=>{
     await dbQuery(`delete from product where product_id = ${product_id}`, dbName);
     res.status(200).json({
         success: true,
-        message: "Product Deleted successfully!"
+        message: "Product Deleted successfully!" 
     });
 });
