@@ -8,27 +8,25 @@ create table user(
     password varchar(1024) NOT NULL
 );
 
-INSERT INTO user VALUES (1, 'adarshrawat.run@gmail.com', '12345678');
+INSERT INTO user VALUES (1, 'adarshrawat.run@gmail.com', '7440747707', '12345678');
 
 create database client1;
 use client1;
 
 create table home(
-    no_of_orders INT,
-    no_of_pending_orders INT,
-    no_of_customers INT,
-    no_of_products INT,
+    orders INT,
+    n_customers INT,
+    n_products INT,
     unavailable_products INT,
-    no_of_product_sold INT
+    n_sold INT
 );
 
 CREATE TABLE user(
 	user_id 	INT PRIMARY KEY AUTO_INCREMENT,
     name 		VARCHAR(255) NOT NULL,
-    phone       VARCHAR(20) NOT NULL
+    phone       VARCHAR(20) NOT NULL,
     email 		VARCHAR(255) NOT NULL UNIQUE,
-    password 	VARCHAR(255) NOT NULL,
-    phone varchar(255) NOT NUll,
+    password 	VARCHAR(255) NOT NULL
 );
 
 CREATE TABLE address(
@@ -85,10 +83,13 @@ CREATE TABLE user_order(
 	CONSTRAINT user_order_address_id_fk FOREIGN KEY ( address_id )
         REFERENCES address ( address_id )
 		ON DELETE NO ACTION ON UPDATE CASCADE
-	
 );
 -- In order status, 1-order placed, 2-order-shipped, 3-order delievered
-
+INSERT INTO `user_order` (order_id, buyer_id, address_id, total_price, shipping_price, order_status) 
+VALUES (4,1,1,114500.00,50.00,3),
+(5,1,1,100000.00,50.00,1),
+(6,3,3,240000.00,50.00,'2023-01-25 12:07:38',1);
+ 
 CREATE TABLE order_product (
     order_id     INT,
     product_id   INT,
@@ -108,13 +109,9 @@ CREATE TABLE order_product (
 
 INSERT INTO `product` VALUES (1,'Samsung Galaxy M13',14500.00,NULL,'This is Samsung Smartphone',100),(2,'Samsung Galaxy S22',35000.00,NULL,'This is FlagShip Smartphone',100),(3,'IPhone14',120000.00,NULL,'This is Iphone ',500),(4,'IPhone1',100000.00,NULL,'This is Iphone ',400),(5,'IPhone12',100000.00,NULL,'This is Iphone ',300),(6,'IPhone12',100000.00,NULL,'This is Iphone ',250),(7,'Bucket',100.00,NULL,NULL,500);
 
-insert into user (name, email, password) values ('Karik','kartik@gmail.com', '12345678'),
-('Akshat Kotwalla', 'akshat@gmail.com', '12345678'),
-('Tanish Jain', 'tanish@gmail.com', '12345678');
-
-UPDATE `client1`.`user` SET `phone` = '8658991924' WHERE (`user_id` = '1');
-UPDATE `client1`.`user` SET `phone` = '2345678901' WHERE (`user_id` = '2');
-UPDATE `client1`.`user` SET `phone` = '3456789021' WHERE (`user_id` = '3');
+insert into user (name, email, phone, password) values ('Karik','kartik@gmail.com', '7440747707', '12345678'),
+('Akshat Kotwalla', 'akshat@gmail.com', '7440747707', '12345678'),
+('Tanish Jain', 'tanish@gmail.com', '7440747707', '12345678');
 
 
 insert into address (user_id, street1, city, zipcode) values
@@ -123,5 +120,4 @@ insert into address (user_id, street1, city, zipcode) values
 (3, "Teen Imli", "Patna", 45810);
 
 
- INSERT INTO `user_order` VALUES (4,1,1,114500.00,50.00,'2023-01-25 12:07:38',NULL,NULL,3),(5,1,1,100000.00,50.00,'2023-01-25 12:07:38',NULL,NULL,1),(6,3,3,240000.00,50.00,'2023-01-25 12:07:38',NULL,NULL,1);
- INSERT INTO `order_product` VALUES (4,1,1,14500),(4,4,1,100000),(5,5,1,100000),(6,3,2,240000);
+INSERT INTO `order_product` VALUES (4,1,1,14500),(4,4,1,100000),(5,5,1,100000),(6,3,2,240000);
