@@ -1,4 +1,5 @@
-
+/* Before running script, Make Sure master, client1 database is not containing any sensitive information.*/ 
+Drop database master; drop database client1;
 create database master;
 use master;
 create table user(
@@ -20,7 +21,7 @@ create table home(
     unavailable_products INT,
     n_sold INT
 );
-
+INSERT INTO home VALUES(3,5,10,2,10);
 CREATE TABLE user(
 	user_id 	INT PRIMARY KEY AUTO_INCREMENT,
     name 		VARCHAR(255) NOT NULL,
@@ -50,10 +51,10 @@ CREATE TABLE product (
     product_id 		INT PRIMARY KEY AUTO_INCREMENT,
     name 			VARCHAR(255) NOT NULL,
     price 			DECIMAL(10, 2) NOT NULL,
-    category_id     INT,
+    category_id     INT DEFAULT NULL,
     description     VARCHAR(255),
     stock    		INT NOT NULL,
-    image_url       VARCHAR(255) NOT NULL
+    image_url       VARCHAR(255) DEFAULT NULL,
 	CONSTRAINT product_category_id_fk FOREIGN KEY ( category_id )
         REFERENCES category ( category_id )
 		ON DELETE CASCADE ON UPDATE CASCADE
@@ -85,10 +86,7 @@ CREATE TABLE user_order(
 		ON DELETE NO ACTION ON UPDATE CASCADE
 );
 -- In order status, 1-order placed, 2-order-shipped, 3-order delievered
-INSERT INTO `user_order` (order_id, buyer_id, address_id, total_price, shipping_price, order_status) 
-VALUES (4,1,1,114500.00,50.00,3),
-(5,1,1,100000.00,50.00,1),
-(6,3,3,240000.00,50.00,'2023-01-25 12:07:38',1);
+
  
 CREATE TABLE order_product (
     order_id     INT,
@@ -107,7 +105,6 @@ CREATE TABLE order_product (
 
 
 
-INSERT INTO `product` VALUES (1,'Samsung Galaxy M13',14500.00,NULL,'This is Samsung Smartphone',100),(2,'Samsung Galaxy S22',35000.00,NULL,'This is FlagShip Smartphone',100),(3,'IPhone14',120000.00,NULL,'This is Iphone ',500),(4,'IPhone1',100000.00,NULL,'This is Iphone ',400),(5,'IPhone12',100000.00,NULL,'This is Iphone ',300),(6,'IPhone12',100000.00,NULL,'This is Iphone ',250),(7,'Bucket',100.00,NULL,NULL,500);
 
 insert into user (name, email, phone, password) values ('Karik','kartik@gmail.com', '7440747707', '12345678'),
 ('Akshat Kotwalla', 'akshat@gmail.com', '7440747707', '12345678'),
@@ -119,5 +116,11 @@ insert into address (user_id, street1, city, zipcode) values
 (2, "Choti Gwaltoli", "Bhopal", 45470),
 (3, "Teen Imli", "Patna", 45810);
 
+INSERT INTO `product` (name, price, description, stock) VALUES ('Samsung Galaxy M13',14500.00,'This is Samsung Smartphone',100),('Samsung Galaxy S22',35000.00,'This is FlagShip Smartphone',100),('IPhone14',120000.00,'This is Iphone ',500),('IPhone1',100000.00,'This is Iphone ',400),('IPhone12',100000.00,'This is Iphone ',300),('IPhone12',100000.00,'This is Iphone ',250),('Bucket',100.00,NULL,500);
+
+INSERT INTO `user_order` (order_id, buyer_id, address_id, total_price, shipping_price, order_status) 
+VALUES (4,1,1,114500.00,50.00,3),
+(5,1,1,100000.00,50.00,1),
+(6,3,3,240000.00,50.00,1);
 
 INSERT INTO `order_product` VALUES (4,1,1,14500),(4,4,1,100000),(5,5,1,100000),(6,3,2,240000);
