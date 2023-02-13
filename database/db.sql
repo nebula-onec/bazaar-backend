@@ -25,6 +25,7 @@ create table home(
 CREATE TABLE user(
 	user_id 	INT PRIMARY KEY AUTO_INCREMENT,
     name 		VARCHAR(255) NOT NULL,
+    phone       VARCHAR(20) NOT NULL
     email 		VARCHAR(255) NOT NULL UNIQUE,
     password 	VARCHAR(255) NOT NULL,
     phone varchar(255) NOT NUll,
@@ -36,7 +37,6 @@ CREATE TABLE address(
     street1 	VARCHAR(255) NOT NULL,
     street2 	VARCHAR(255),
     city 		VARCHAR(50) NOT NULL,
-    
     zipcode 	DECIMAL(6) NOT NULL,
 	CONSTRAINT address_user_id_fk FOREIGN KEY ( user_id )
         REFERENCES user ( user_id )
@@ -55,6 +55,7 @@ CREATE TABLE product (
     category_id     INT,
     description     VARCHAR(255),
     stock    		INT NOT NULL,
+    image_url       VARCHAR(255) NOT NULL
 	CONSTRAINT product_category_id_fk FOREIGN KEY ( category_id )
         REFERENCES category ( category_id )
 		ON DELETE CASCADE ON UPDATE CASCADE
@@ -103,20 +104,6 @@ CREATE TABLE order_product (
 		ON DELETE RESTRICT ON UPDATE CASCADE
 );
 
-
-DROP TABLE `client1`.`product_image`;
-
-ALTER TABLE `client1`.`product` 
-ADD COLUMN `image_url` VARCHAR(255) NOT NULL AFTER `stock`
-
-
-ALTER TABLE `client1`.`user` 
-ADD COLUMN `phone` VARCHAR(20) NOT NULL AFTER `name`;
-
-
-ALTER TABLE `client1`.`address` 
-DROP COLUMN `country`,
-DROP COLUMN `state`;
 
 
 INSERT INTO `product` VALUES (1,'Samsung Galaxy M13',14500.00,NULL,'This is Samsung Smartphone',100),(2,'Samsung Galaxy S22',35000.00,NULL,'This is FlagShip Smartphone',100),(3,'IPhone14',120000.00,NULL,'This is Iphone ',500),(4,'IPhone1',100000.00,NULL,'This is Iphone ',400),(5,'IPhone12',100000.00,NULL,'This is Iphone ',300),(6,'IPhone12',100000.00,NULL,'This is Iphone ',250),(7,'Bucket',100.00,NULL,NULL,500);
