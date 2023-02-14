@@ -49,7 +49,7 @@ CREATE TABLE category (
 
 CREATE TABLE product (
     product_id 		INT PRIMARY KEY AUTO_INCREMENT,
-    name 			VARCHAR(255) NOT NULL,
+    product_name 			VARCHAR(255) NOT NULL,
     price 			DECIMAL(10, 2) NOT NULL,
     category_id     INT DEFAULT NULL,
     description_short     VARCHAR(120),
@@ -117,7 +117,7 @@ insert into address (user_id, street1, city, zipcode) values
 (2, "Choti Gwaltoli", "Bhopal", 45470),
 (3, "Teen Imli", "Patna", 45810);
 
-INSERT INTO `product` (name, price, description, stock) VALUES ('Samsung Galaxy M13',14500.00,'This is Samsung Smartphone',100),('Samsung Galaxy S22',35000.00,'This is FlagShip Smartphone',100),('IPhone14',120000.00,'This is Iphone ',500),('IPhone1',100000.00,'This is Iphone ',400),('IPhone12',100000.00,'This is Iphone ',300),('IPhone12',100000.00,'This is Iphone ',250),('Bucket',100.00,NULL,500);
+INSERT INTO `product` (product_name, price, description, stock) VALUES ('Samsung Galaxy M13',14500.00,'This is Samsung Smartphone',100),('Samsung Galaxy S22',35000.00,'This is FlagShip Smartphone',100),('IPhone14',120000.00,'This is Iphone ',500),('IPhone1',100000.00,'This is Iphone ',400),('IPhone12',100000.00,'This is Iphone ',300),('IPhone12',100000.00,'This is Iphone ',250),('Bucket',100.00,NULL,500);
 
 INSERT INTO `user_order` (order_id, buyer_id, address_id, total_price, shipping_price, order_status) 
 VALUES (4,1,1,114500.00,50.00,3),
