@@ -52,7 +52,8 @@ CREATE TABLE product (
     name 			VARCHAR(255) NOT NULL,
     price 			DECIMAL(10, 2) NOT NULL,
     category_id     INT DEFAULT NULL,
-    description     VARCHAR(255),
+    description_short     VARCHAR(120),
+    description_long      varchar(250),
     stock    		INT NOT NULL,
     image_url       VARCHAR(255) DEFAULT NULL,
 	CONSTRAINT product_category_id_fk FOREIGN KEY ( category_id )
