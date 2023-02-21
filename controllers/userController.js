@@ -43,7 +43,7 @@ exports.homePage = catchAsyncError(async(req, res, next)=>{
   const dbName = 'client'+req.user.id;
 
   let info = (await dbQuery(`select * from home`, dbName))[0];
-  let pendingOrders = await dbQuery(`select user_order.order_id, user_order.order_date, user_order.order_status, user.user_id, user.phone  from user_order JOIN user where user_order.order_status not in (0,3) AND user_order.buyer_id=user.user_id order by user_order.order_date DESC`, dbName);
+  let pendingOrders = await dbQuery(`select user_order.order_id, user_order.order_date, user_order.order_status, user.user_id,user.name from user_order JOIN user where user_order.order_status not in (0,3) AND user_order.buyer_id=user.user_id order by user_order.order_date DESC`, dbName);
 
   info.unfulfilled_orders = { number: pendingOrders.length, orders: pendingOrders };
 
