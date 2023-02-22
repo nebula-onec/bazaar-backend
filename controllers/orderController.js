@@ -13,7 +13,7 @@ exports.getOrderDetails = catchAsyncError( async(req, res, next) => {
     });
     pendingOrders=orders.length-successfulOrders;
 
-    const productInOrders = await dbQuery(`select order_product.*, product.name  from order_product JOIN product ON order_product.product_id = product.product_id`, dbName);
+    const productInOrders = await dbQuery(`select order_product.*, product.product_name  from order_product JOIN product ON order_product.product_id = product.product_id`, dbName);
 
     // productInOrders = [{order_id:1, product_id:1, quantity:5, price: 200}, {order_id:1, product_id:2, quantity:1, price:1000}
     // ,  {order_id:2, product_id:2, quantity:3, price:1000},  {order_id:2, product_id:5, quantity:1, price:12000}];
@@ -22,7 +22,7 @@ exports.getOrderDetails = catchAsyncError( async(req, res, next) => {
         if(!temp.has(product.order_id)){
             temp.set(product.order_id, []);
         }
-        temp.get(product.order_id).push({product_id: product.product_id, quantity: product.quantity, price: product.price, product_name: product.name});
+        temp.get(product.order_id).push({product_id: product.product_id, quantity: product.quantity, price: product.price, product_name: product.product_name});
     });
 
     orders.forEach((order)=>{
@@ -62,7 +62,7 @@ exports.getSingleOrderDetails = catchAsyncError( async(req, res, next)=>{
     order.user = {user_id: order.buyer_id, name: user[0].name,phone:user[0].phone};
     delete order.buyer_id;
 
-    const products = await dbQuery(`select order_product.product_id, order_product.quantity, order_product.price, product.name from order_product JOIN product ON order_product.product_id = product.product_id where order_product.order_id = ${order.order_id}`, dbName);
+    const products = await dbQuery(`select order_product.product_id, order_product.quantity, order_product.price, product.product_name from order_product JOIN product ON order_product.product_id = product.product_id where order_product.order_id = ${order.order_id}`, dbName);
     
     order.products = products;
 

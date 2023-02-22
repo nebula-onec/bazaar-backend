@@ -16,15 +16,15 @@ exports.getproducts = catchAsyncError( async (req, res, next) =>{
 
 exports.createProduct = catchAsyncError( async (req, res, next) => {
     const dbName = 'client' + req.user.id;
-    const {name, price, description_short, description_long, stock} = req.body;
-    if(!name || !price || !stock){
+    const {product_name, price, description_short, description_long, stock} = req.body;
+    if(!product_name || !price || !stock){
         return res.send(206).json({
             success: false,
             message: "Please give Full Details"
         });
     }
     const product = {
-        name, price, description_short, description_long, stock
+        product_name, price, description_short, description_long, stock
     }
     await dbInsertQuery(`INSERT INTO product SET ? `, product , dbName);
     res.status(200).json({
