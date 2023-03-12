@@ -1,5 +1,10 @@
-# bazaar-backend
-Clone the Repo https://github.com/DipanshuJ/bazaar-backend.git 
+## Bazaar-Backend
+**Bazaar** - A system that provide platform to the seller who wants to turn their offline Shop into online marketplace. <br/>
+This Repository contains Backend Implementation of Bazaar system.<br/>
+
+Bazaar has following features: <br/>
+
+clone the Repo https://github.com/DipanshuJ/bazaar-backend.git 
 
 Run database/db.sql file in your local System
 
