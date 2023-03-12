@@ -1,8 +1,5 @@
 # bazaar-backend
-Clone the Repo 
-'''
-https://github.com/DipanshuJ/bazaar-backend.git 
-'''
+Clone the Repo https://github.com/DipanshuJ/bazaar-backend.git 
 
 Run database/db.sql file in your local System
 
