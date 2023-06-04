@@ -11,6 +11,10 @@ if (process.env.NODE_ENV !== "PRODUCTION") {
 app.use(express.json());
 app.use(cookieParser());
 
+
+app.get("/", (req, res)=> {
+    res.send("hello world")
+})
 //Route Imports
 const user = require("./routes/userRoute");
 const product = require("./routes/productRoute");

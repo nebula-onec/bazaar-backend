@@ -160,7 +160,7 @@ VALUES (4,1,1,114500.00,50.00,3),
 INSERT INTO `order_product` VALUES (4,1,1,14500),(4,4,1,100000),(5,5,1,100000),(6,3,2,240000);
 
 
-insert into user (user_id, name, email, phone, password, cart) values (15, 'Karik','kartik@gmail.com', '7440747707', '12345678', '{"1":1, "2":3}'),
+-- insert into user (user_id, name, email, phone, password, cart) values (15, 'Karik','kartik@gmail.com', '7440747707', '12345678', '{"1":1, "2":3}'),
 INSERT INTO `user_order` (order_id, buyer_id, address_id, total_price, shipping_price, order_status) 
 VALUES (15,15,1,114500.00,50.00,3),
 (16,15,1,100000.00,50.00,1),
