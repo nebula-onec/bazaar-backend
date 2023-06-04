@@ -14,11 +14,13 @@ app.use(cookieParser());
 //Route Imports
 const user = require("./routes/userRoute");
 const product = require("./routes/productRoute");
+const home = require('./routes/homeRoute');
 const order = require("./routes/orderRoute");
 
-app.use("/api/v1",user);
-app.use("/api/v1",product);
-app.use("/api/v1",order);
+app.use("/api", user);
+app.use("/api", product);
+app.use("/api", home);
+app.use("/api", order);
 
 
 
