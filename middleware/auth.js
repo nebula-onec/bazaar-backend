@@ -89,6 +89,7 @@ exports.adminAuthentication = catchAsyncError(async (req, res, next) => {
   if (!token) {
     return res.status(401).json({ success: false, message: "Please Login to access this resource" });
   }
+  
 
   const decode = jwt.verify(token, process.env.JWT_ADMIN_SECRET);
 

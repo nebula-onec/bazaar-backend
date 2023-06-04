@@ -27,6 +27,7 @@ Order.find = (filters)=> {
     })
 }
 
+// "SELECT user_order.*, JSON_OBJECT('address_id' , address_id, 'street1', street1, 'street2', street2, 'city', city, 'zipcode', zipcode) as address, JSON_ARRAYAGG( JSON_OBJECT('product_id', product_id, 'product_name', product_name, 'images', images, 'quantity', quantity, 'price', order_product.price) ) as products from user_order NATURAL JOIN address NATURAL JOIN order_product JOIN product USING(product_id) where buyer_id = 15 group by order_id"
 Order.findById = (id)=> {
     return new Promise((resolve, reject)=> {
         let query = "SELECT user_order.*, JSON_OBJECT('address_id' , address_id, 'street1', street1, 'street2', street2, 'city', city, 'zipcode', zipcode) as address, JSON_ARRAYAGG( JSON_OBJECT('product_id', product_id, 'product_name', product_name, 'images', images, 'quantity', quantity, 'price', order_product.price) ) as products from user_order NATURAL JOIN address NATURAL JOIN order_product JOIN product USING(product_id) "
