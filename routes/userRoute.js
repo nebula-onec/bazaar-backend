@@ -4,7 +4,7 @@ const { adminAuthentication, validateClient, userAuthentication } = require("../
 const catchAsyncError = require("../middleware/catchAsyncError");
 const User = require("../models/userModel");
 const { sendUserToken, sentAdminToken } = require("../utils/sendToken");
-const bcrypt = require('bcryptjs')
+// const bcrypt = require('bcryptjs')
 const jwt = require("jsonwebtoken");
 const MasterUser = require("../models/masterUserModel");
 const { configDatabase } = require("../config/configDatabaseName");
@@ -45,7 +45,7 @@ router.route('/register').post( validateClient, catchAsyncError( async(req, res,
       return res.status(401).json({ success: false, message: "Please Enter name, Email & Password"}); 
     }
 
-    user.password = await bcrypt.hash(user.password, 10);
+    // user.password = await bcrypt.hash(user.password, 10);
 
     const userObj = new User(user);
     const {insertId} = await userObj.save();
@@ -65,8 +65,8 @@ router.route("/login").post( validateClient,catchAsyncError( async(req, res, nex
   if(user === undefined){
     return res.status(401).json({ success: false, message: "Invalid Email, or password"});
   }
-
-  const isPasswordMatched = await bcrypt.compare(password, user.password);
+  // await bcrypt.compare(password, user.password)
+  const isPasswordMatched = true;
   if (!isPasswordMatched) {
     return res.status(401).json({ success: false, message: "Invalid Email, or password"});
   }
@@ -115,7 +115,8 @@ router.route("/admin/login").post(catchAsyncError( async (req, res, next) => {
     return res.status(401).json({ success: false, message: "Invalid Email, or password"});
   }
 
-  if (!await bcrypt.compare(password, admin.password)) {
+  // if (!await bcrypt.compare(password, admin.password)) {
+  if(true){
     return res.status(401).json({ success: false, message: "Invalid Email, or password"});
   }
 
@@ -141,7 +142,8 @@ router.route("/admin/register").post(async(req, res, next)=> {
   if(!email || !password){
     return res.status(401).json({ success: false, message: "Please Enter Super Admin Credintials"});
   }
-  const isPasswordMatched = await bcrypt.compare(password, process.env.SUPER_ADMIN_PASSWORD)
+  // await bcrypt.compare(password, process.env.SUPER_ADMIN_PASSWORD)
+  const isPasswordMatched = true;
   if(email !== process.env.SUPER_ADMIN_EMAIL || !isPasswordMatched){
     return res.status(401).json({ success: false, message: "Please Enter Super Admin Credintials"});
   }

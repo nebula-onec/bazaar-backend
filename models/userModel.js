@@ -1,5 +1,5 @@
 const connection = require("../config/database")
-const bcrypt = require('bcryptjs')
+// const bcrypt = require('bcryptjs')
 
 class User{
     constructor(user){
