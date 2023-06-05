@@ -51,7 +51,7 @@ exports.validateUser = async(req, res, next) => {
 exports.userAuthentication = catchAsyncError( async(req, res, next)=> {
   const { token } = req.cookies;
   
-  if (!token) {
+  if (token === undefined) {
     return res.status(401).json({ success: false, message: "Token nahi he! Please Login to access this resource" });
   }
 
