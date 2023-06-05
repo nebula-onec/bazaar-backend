@@ -3,7 +3,7 @@ const { adminAuthentication, validateClient } = require('../middleware/auth');
 const catchAsyncError = require('../middleware/catchAsyncError');
 const Category = require('../models/categoryModel');
 const Product = require('../models/productModel');
-
+const cloudinary = require("cloudinary").v2;
 const router = require('express').Router();
 
 // Get Products --Client API
@@ -48,39 +48,33 @@ router.route("/product/:id").get( validateClient ,catchAsyncError( async (req, r
 
 //Create Product --Admin API 
 router.route('/admin/product/create').post(adminAuthentication, catchAsyncError( async (req, res, next) => {
-    let images = [];
 
-    if (typeof req.body.images === "string") {
-        images.push(req.body.images);
-    } else {
-        images = req.body.images;
-    }
+    let { product_name, price, category_id, description_short, description_long, stock, imageLinks} = req.body;
 
-    const imagesLinks = [];
-
-    for (let i = 0; i < images.length; i++) {
-        const result = await cloudinary.uploader.upload(images[i], {
-            folder: "products",
-        });
-
-        imagesLinks.push({
-        public_id: result.public_id,
-        url: result.secure_url,
-        });
-    }
-
-    
-    const { product_name, price, description_short, description_long, stock} = req.body;
     if(!product_name || !price || !stock){
-        return res.send(206).json({
+        return res.status(206).json({
             success: false,
             message: "Please give Full Details"
         });
     }
-    const product = {
-        product_name, price, description_short, description_long, stock, imagesLinks
+
+    if(imageLinks === undefined) imageLinks = []
+    else if (typeof imageLinks === "string") {
+        imageLinks = [imageLinks]
+    } 
+
+    let images = "";
+
+    for (let i = 0; i < imageLinks.length; i++) {
+        const result = await cloudinary.uploader.upload(imageLinks[i]);
+        images += (result.public_id) + ";";
     }
-    await dbInsertQuery(`INSERT INTO product SET ? `, product , dbName);
+
+
+    await configDatabase(req.admin.db);
+    const product = new Product({ product_name, price,category_id,  description_short, description_long, stock, images})
+    await product.save()
+
     res.status(200).json({
         success: true,
         message: "Product Created successfully!"
@@ -89,8 +83,61 @@ router.route('/admin/product/create').post(adminAuthentication, catchAsyncError(
 );
 
 
+//Delete And Update Product --Admin API
+router.route('/admin/product/:id').delete(adminAuthentication, catchAsyncError( async(req, res, next)=>{
+    const product_id = req.params.id;
+    await configDatabase(req.admin.db);
+    const images = (await Product.findById(product_id)).images
+
+    // Delete Image from Cloudinary
+
+    await Product.deleteById(product_id)
+    res.status(200).json({
+        success: true,
+        message: "Product Deleted successfully!" 
+    });
+})).patch(adminAuthentication, catchAsyncError( async(req, res, next)=>{
+    console.log("aa gaye 1")
+    const product_id = req.params.id
+    let { product_name, price, category_id, description_short, description_long, stock, imageLinks} = req.body;
+
+    if(!product_name || !price || !stock){
+        return res.status(206).json({
+            success: false,
+            message: "Please give Full Details"
+        });
+    }
+
+    const oldImages = (await Product.findById(product_id)).images
+    console.log("aa gaye 2")
+
+    // Delete oldImages from cloudinary
+    
+    if(imageLinks === undefined) imageLinks = []
+    else if (typeof imageLinks === "string") {
+        imageLinks = [imageLinks]
+    } 
+
+    let images = "";
+
+    for (let i = 0; i < imageLinks.length; i++) {
+        const result = await cloudinary.uploader.upload(imageLinks[i]);
+        images += (result.public_id) + ";";
+    }
+
+
+    await configDatabase(req.admin.db);
+    await Product.updateById(product_id, { product_name, price,category_id,  description_short, description_long, stock, images})
+    console.log("aa gaye 3")
+
+    res.status(200).json({
+        success: true,
+        message: "Product Updated successfully!"
+    });
+}))
+
+
 // router.route('/admin/products').get( adminAuthentication ,getproducts);
-// router.route('/admin/deleteproduct').delete(adminAuthentication, deleteProduct);
 
 
 

@@ -1,4 +1,5 @@
 const { configDatabase } = require("../config/configDatabaseName");
+const connection = require("../config/database");
 const MasterUser = require("../models/masterUserModel");
 const User = require("../models/userModel");
 const catchAsyncError = require("./catchAsyncError");
@@ -13,7 +14,8 @@ exports.validateClient = catchAsyncError( async (req, res, next)=>{
         message: "Invalid request no client_id"
     });
   }
-  await configDatabase('client', req.headers['client_id']);
+  let DB = 'client' + connection.escape(Number(req.headers['client_id']))
+  await configDatabase(DB);
   next();
 });
 
@@ -64,7 +66,8 @@ exports.userAuthentication = catchAsyncError( async(req, res, next)=> {
     });
     return res.status(401).json({ success: false, message: "token galat he! Please Login to access this resource" });
   }
-  await configDatabase('client', decode.client_id)
+  let DB = 'client' + connection.escape(Number(decode.client_id))
+  await configDatabase(DB);
   req.user = await User.findById(decode.id);
   // req.user = { user_id, name, phone, email, cart }
   if(req.user === undefined){
@@ -92,8 +95,8 @@ exports.adminAuthentication = catchAsyncError(async (req, res, next) => {
   
 
   const decode = jwt.verify(token, process.env.JWT_ADMIN_SECRET);
-
-  if(decode.id === undefined){
+  
+  if(decode.admin_id === undefined){
     res.cookie("token", null, {
       expires: new Date(Date.now()),
       httpOnly: true,
@@ -101,13 +104,16 @@ exports.adminAuthentication = catchAsyncError(async (req, res, next) => {
     return res.status(401).json({ success: false, message: "token galat he! Please Login to access this resource" });
   }
   await configDatabase('master')
-  req.user = await MasterUser.findById(decode.id);
-  // next();
+  req.admin = await MasterUser.findById(decode.admin_id);
+  if(req.admin === undefined){
+    res.cookie("token", null, {
+      expires: new Date(Date.now()),
+      httpOnly: true,
+    });
+    return res.status(401).json({ success: false, message: "token galat he! Please Login to access this resource" });
+  }
 
-  res.status(200).json({
-    success: true,
-    message: "Admin is valid"
-  })
+  next();
 
 });
 

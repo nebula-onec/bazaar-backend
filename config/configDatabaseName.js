@@ -1,10 +1,8 @@
 const connection = require("./database");
 
-exports.configDatabase = (DBtype, client_id) =>{
+exports.configDatabase = (DB) =>{
     return new Promise((resolve, reject)=> {
-        let query = 'USE '
-        if(DBtype === 'master') query += 'master'
-        else if(DBtype === 'client') query += 'client' + connection.escape(Number(client_id));
+        let query = 'USE ' + DB
         connection.query(query, (err, result)=> {
             if(err) reject(err);
             resolve(result);

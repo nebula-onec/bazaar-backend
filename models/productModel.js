@@ -3,7 +3,23 @@ const connection = require("../config/database");
 
 
 class Product{
-    
+    constructor(product){
+        this.product_name = product.product_name
+        this.price = product.price
+        this.category_id = product.category_id
+        this.description_short = product.description_short
+        this.description_long = product.description_long
+        this.stock = product.stock
+        this.images = product.images
+    }
+    save = ()=> {
+        return new Promise((resolve, reject)=> {
+            connection.query("INSERT INTO product SET ?", this, (err, result)=> {
+                if(err) reject(err)
+                resolve(result)
+            })
+        })
+    }
 }
 
 //Use category.category_id Or product.category_id to access category_id in SQL Query
@@ -36,6 +52,24 @@ Product.findById = (id) =>{
         });
         
     });
+}
+
+Product.deleteById = (product_id)=> {
+    return new Promise((resolve, reject)=> {
+        connection.query('DELETE FROM product where product_id = ?', product_id, (err, result)=> {
+            if(err) reject(err)
+            resolve(result)
+        })
+    })
+}
+
+Product.updateById = (id, product)=> {
+    return new Promise((resolve, reject)=> {
+        connection.query('UPDATE product SET ? WHERE product_id = ?', [product, id], (err, result)=> {
+            if(err) reject(err)
+            resolve(result)
+        })
+    })
 }
 
 module.exports = Product;

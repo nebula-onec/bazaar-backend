@@ -111,12 +111,12 @@ router.route("/admin/login").post(catchAsyncError( async (req, res, next) => {
   
   await configDatabase('master')
   const admin = (await MasterUser.find(['*'], {email}))[0];
+  
   if(admin === undefined){
     return res.status(401).json({ success: false, message: "Invalid Email, or password"});
   }
 
   if (!await bcrypt.compare(password, admin.password)) {
-  // if(true){
     return res.status(401).json({ success: false, message: "Invalid Email, or password"});
   }
 

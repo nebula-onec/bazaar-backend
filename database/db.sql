@@ -60,7 +60,7 @@ CREATE TABLE product (
     description_short     VARCHAR(120),
     description_long      varchar(1000),
     stock    		INT NOT NULL,
-    images       varchar(800) NOT NULL,
+    images       varchar(800) NOT NULL DEFAULT "",
 	CONSTRAINT product_category_id_fk FOREIGN KEY ( category_id )
         REFERENCES category ( category_id )
 		ON DELETE CASCADE ON UPDATE CASCADE
