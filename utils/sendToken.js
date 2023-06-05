@@ -2,6 +2,7 @@ const jwt = require("jsonwebtoken");
 
 
 // Send Token for Client App 
+// User Token Payload = { id, client_id }
 exports.sendUserToken = (id, client_id, res)=> {
   console.log("id: ", id, ", client_id: ", client_id);
   const payload = {
