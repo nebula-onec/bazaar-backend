@@ -29,7 +29,13 @@ router.route("/orders/myorders").get( userAuthentication, catchAsyncError(async(
 
 //Single Order -- Client API
 router.route("/order/:id").get(userAuthentication, catchAsyncError(async(req, res, next)=> {
-    const order = await Order.findById(req.params.id); 
+    const order = await Order.findById(req.params.id);
+    if(order === undefined){
+        return res.status(400).json({
+            success: false,
+            message: "Wrong order ID"
+        })
+    } 
     order.address = JSON.parse(order.address)
     order.products = JSON.parse(order.products)
     res.status(400).json({
