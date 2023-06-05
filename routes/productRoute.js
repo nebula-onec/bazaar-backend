@@ -87,8 +87,14 @@ router.route('/admin/product/create').post(adminAuthentication, catchAsyncError(
 router.route('/admin/product/:id').delete(adminAuthentication, catchAsyncError( async(req, res, next)=>{
     const product_id = req.params.id;
     await configDatabase(req.admin.db);
-    const images = (await Product.findById(product_id)).images
-
+    const targetedProduct = await Product.findById(product_id)
+    if(targetedProduct === undefined){
+        return res.status(400).json({
+            success: false,
+            message: "Invalid Id"
+        })
+    }
+    const images = targetedProduct.images;
     // Delete Image from Cloudinary
 
     await Product.deleteById(product_id)

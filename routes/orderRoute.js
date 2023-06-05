@@ -27,7 +27,7 @@ router.route("/orders/myorders").get( userAuthentication, catchAsyncError(async(
 }))
 
 
-//Single Order -- Client API
+//Get Single Order, Cancel Single Order( i.e., update order_status) --Client API
 router.route("/order/:id").get(userAuthentication, catchAsyncError(async(req, res, next)=> {
     const order = await Order.findById(req.params.id);
     if(order === undefined){
