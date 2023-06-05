@@ -103,7 +103,7 @@ router.route('/admin/product/:id').delete(adminAuthentication, catchAsyncError( 
         message: "Product Deleted successfully!" 
     });
 })).patch(adminAuthentication, catchAsyncError( async(req, res, next)=>{
-    console.log("aa gaye 1")
+    
     const product_id = req.params.id
     let { product_name, price, category_id, description_short, description_long, stock, imageLinks} = req.body;
 
@@ -114,8 +114,15 @@ router.route('/admin/product/:id').delete(adminAuthentication, catchAsyncError( 
         });
     }
 
-    const oldImages = (await Product.findById(product_id)).images
-    console.log("aa gaye 2")
+    await configDatabase(req.admin.db);
+    const targetedProduct = await Product.findById(product_id)
+    if(targetedProduct === undefined){
+        return res.status(400).json({
+            success: false,
+            message: "Invalid Id"
+        })
+    }
+    const oldImages = targetedProduct.images
 
     // Delete oldImages from cloudinary
     
@@ -134,7 +141,6 @@ router.route('/admin/product/:id').delete(adminAuthentication, catchAsyncError( 
 
     await configDatabase(req.admin.db);
     await Product.updateById(product_id, { product_name, price,category_id,  description_short, description_long, stock, images})
-    console.log("aa gaye 3")
 
     res.status(200).json({
         success: true,
