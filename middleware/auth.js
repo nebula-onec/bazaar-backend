@@ -101,7 +101,7 @@ exports.adminAuthentication = catchAsyncError(async (req, res, next) => {
       expires: new Date(Date.now()),
       httpOnly: true,
     });
-    return res.status(401).json({ success: false, message: "token galat he! Please Login to access this resource" });
+    return res.status(401).json({ success: false, message: "Please Login to access this resource" });
   }
   await configDatabase('master')
   req.admin = await MasterUser.findById(decode.admin_id);
@@ -110,7 +110,7 @@ exports.adminAuthentication = catchAsyncError(async (req, res, next) => {
       expires: new Date(Date.now()),
       httpOnly: true,
     });
-    return res.status(401).json({ success: false, message: "token galat he! Please Login to access this resource" });
+    return res.status(401).json({ success: false, message: "Please Login to access this resource" });
   }
 
   next();

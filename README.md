@@ -1,30 +1,60 @@
-## Bazaar-Backend
-**Bazaar** - A system that provide platform to the seller who wants to turn their offline Shop into online marketplace. <br/>
-This Repository contains Backend Implementation of Bazaar system.<br/>
+# Bazaar-Backend
+**Bazaar** - A system that provide platform to the seller who wants to turn their offline Shop into online marketplace. It enables sellers to setup their store online, and make their store live with their own store’s application ready in a short time.
 
-Bazaar has following features: <br/>
+# REST API
 
-clone the Repo https://github.com/DipanshuJ/bazaar-backend.git 
+The REST API to the Bazaar app is described below.
 
-Run database/db.sql file in your local System
+## ADMIN API
+## Login Admin
+    POST  https://bazaar-backend.onrender.com/api/admin/login
+    
+Request Body
+| Field | Type | Availabality |
+| :---  | :--- | :--- |
+| email | String | Mandatory |
+| password | String | Mandatory | 
 
-Set you DB configuration in config/config.env file
-
-Install dependencies by command $ npm i
-
-Run command $npm start to run server at 8005
-
-
-Here is the list of api endpoints, I have developed-
-
-1) @name- login API, @type- Post, @body- email and password // email="adarshrawat.run@gmail.com", password="12345678", url: "/api/v1/admin/login" 
-
-2) @name- logout API, @type- get, url: "api/v1/logout"
+Response
+| Status Code | Json Response |
+| :------- | :----- |
+| 401 | <pre> { <br> &emsp; "success": false,<br> &emsp; "message":"Invalid Email or Password" <br> }</pre> |
+| 200 | <pre> { <br> &emsp; "success": true,<br> &emsp; "message":"Login Successfully" <br> }</pre> |
 
 
-This is admin restricted API- You need to login to access this api
+## Logout Admin
+    GET  https://bazaar-backend.onrender.com/api/admin/logout 
 
-3) @name- GetProduct API, @type- get, url: "api/v1/admin/products"
+Response  ( Set token header to null ) 
+| Status Code | Json Response |
+| :------- | :----- |
+|  200 | <pre> { <br> &emsp; "success": true,<br> &emsp; "message":"Logged Out" <br> }</pre> |
 
-4) @name- CreatetProduct API, @type- Post, @body- {name, price, description, stock} , url: "api/v1/admin/createproduct"
+    
+
+## Create Product
+    POST  https://bazaar-backend.onrender.com/api/admin/product/create
+    
+Request Body
+| Field | Type | Availabality |
+| :---  | :--- | :--- |
+| product_name | String | Mandatory |
+| price | Number | Mandatory | 
+| category_id | Number | Optional |
+| description_short | String | Optional | 
+| description_long | String | Optional |
+| stock | Number | Mandatory | 
+| imageLinks | String | Optional | 
+
+
+Response
+| Status Code | Json Response |
+| :------- | :----- |
+|  401 | <pre> { <br> &emsp; "success": false,<br> &emsp; "message":"Please Login to access this resource" <br> }</pre> |
+|  400 | <pre> { <br> &emsp; "success": false,<br> &emsp; "message":"Please give Full Details of product" <br> }</pre> |
+| 200 | <pre> { <br> &emsp; "success": true,<br> &emsp; "message":"Product Created successfully!" <br> }</pre> |
+
+
+
+
 

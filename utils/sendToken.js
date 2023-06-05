@@ -44,6 +44,7 @@ exports.sentAdminToken = ( admin_id, res) => {
   
     res.status(200).cookie("token", token, options).json({
       success: true,
+      message: "Login Successfully"
       // token: token,
     });
   };

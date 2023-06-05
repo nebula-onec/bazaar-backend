@@ -52,9 +52,9 @@ router.route('/admin/product/create').post(adminAuthentication, catchAsyncError(
     let { product_name, price, category_id, description_short, description_long, stock, imageLinks} = req.body;
 
     if(!product_name || !price || !stock){
-        return res.status(206).json({
+        return res.status(400).json({
             success: false,
-            message: "Please give Full Details"
+            message: "Please give Full Details of product"
         });
     }
 
