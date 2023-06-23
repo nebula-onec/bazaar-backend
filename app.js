@@ -21,13 +21,14 @@ const product = require("./routes/productRoute");
 const home = require('./routes/homeRoute');
 const order = require("./routes/orderRoute");
 const address = require("./routes/addressRoute");
+const category = require("./routes/categoryRoute");
 
 app.use("/api", user);
 app.use("/api", product);
 app.use("/api", home);
 app.use("/api", order);
 app.use("/api", address);
-
+app.use("/api", category);
 
 
 app.use(error);
