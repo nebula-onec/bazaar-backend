@@ -1,5 +1,4 @@
 const connection = require("../config/database")
-const bcrypt = require('bcryptjs')
 
 class User{
     constructor(user){
@@ -33,7 +32,7 @@ User.find = (columns=['*'], filters) => {
 }
 User.findById = (id)=> {
     return new Promise((resolve, reject)=> {
-        connection.query('SELECT user_id, name, phone, email, cart from user WHERE user_id = ?', id, (err, result)=> {
+        connection.query('SELECT user_id, name, phone, email, cart FROM user WHERE user_id = ?', id, (err, result)=> {
             if(err) reject(err);
             resolve(result[0])
         })

@@ -52,7 +52,7 @@ class Order{
 
 Order.count = (conditions) => {
     return new Promise((resolve, reject)=> {
-        let query = 'select count(*) as total  from user_order'
+        let query = 'SELECT count(*) as total FROM user_order'
         for(let i=0;i<conditions.length;i++){
             if(i==0) query+=" WHERE ";
             query+=conditions[i];
@@ -64,13 +64,14 @@ Order.count = (conditions) => {
         })
     })
 }
-Order.find = (filters)=> {
+Order.find = (filters={})=> {
     return new Promise((resolve, reject)=> {
         const resultPerPage = 10
         let query = "SELECT user_order.*, JSON_OBJECT('address_id' , address_id, 'street1', street1, 'street2', street2, 'city', city, 'zipcode', zipcode) as address, JSON_ARRAYAGG( JSON_OBJECT('product_id', product_id, 'product_name', product_name, 'images', images, 'quantity', quantity, 'price', order_product.price) ) as products from user_order NATURAL JOIN address NATURAL JOIN order_product JOIN product USING(product_id) "
-        if(filters && filters.buyer_id) query += " where buyer_id = " + connection.escape(filters.buyer_id)
+        if(filters.buyer_id) query += " where buyer_id = " + connection.escape(filters.buyer_id)
         query += " GROUP BY order_id ORDER BY order_date DESC " 
         query+=" LIMIT " + connection.escape((filters.page-1)*resultPerPage) + ',' + resultPerPage
+        // console.log("Find query: ", query);
         connection.query(query, (err, result)=> {
             if(err) reject(err)
             resolve(result)
@@ -99,7 +100,7 @@ Order.updateById = (id, updates, conditions=[] )=> {
             query+=' AND '
             query+=conditions[i];
         }
-        console.log(query);
+        // console.log(query);
         connection.query(query, (err, result)=> {
             if(err) reject(err)
             resolve(result)

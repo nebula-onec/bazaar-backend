@@ -37,9 +37,9 @@ const schemas = {
         description_long: joi.string()
     }),
     userRegister: joi.object({
-        name: joi.string().pattern(/^[a-zA-z]+$/).required(),
+        name: joi.string().pattern(/^[a-zA-Z ]+$/).required(),
         email: joi.string().email().required(),
-        phone: joi.string().length(10),
+        phone: joi.string().length(10).pattern(/^[0-9]{10}$/),
         password: joi.string().min(4).max(255).required(),
     }),
     loginDetails: joi.object({
@@ -48,7 +48,16 @@ const schemas = {
     }),
     cartPost: joi.object({
         cart: joi.object().pattern(joi.number().integer(), joi.number().integer().min(1).max(20).required().label("Product's Quantity"), { matches: joi.array().items(joi.number().integer().required()) }).required(),
-    })
+    }),
+    order: joi.object({
+        id: joi.number().integer()
+    }),
+    createAddress: joi.object({
+        street1: joi.string().required(),
+        street2: joi.string(),
+        city: joi.string().required(),
+        zipcode: joi.number().integer().required()
+    }),
 }
 
 module.exports = schemas

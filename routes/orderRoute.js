@@ -1,6 +1,5 @@
 const schemas = require("../config/JOISchemas");
 const connection = require("../config/database");
-const { getOrderDetails, getPendingOrders, changeOrderStatus, getSingleOrderDetails } = require("../controllers/orderController");
 const { adminAuthentication, userAuthentication } = require("../middleware/auth");
 const catchAsyncError = require("../middleware/catchAsyncError");
 const inputValidator = require("../middleware/inputValidator");
@@ -18,12 +17,13 @@ router.route("/orders/myorders").get( userAuthentication, inputValidator(schemas
         page: req.query.page
     }
     const orders = await Order.find(filters);
+    // console.log("orders: ", orders.length)
     const noOfOrders = await Order.count(['buyer_id = ' + req.user.user_id]);
     orders.forEach((order)=> {
         order.address = JSON.parse(order.address)
         order.products = JSON.parse(order.products)
     })
-    res.status(400).json({
+    res.status(200).json({
         success: true,
         noOfOrders,
         orders
@@ -34,12 +34,12 @@ router.route("/orders/myorders").get( userAuthentication, inputValidator(schemas
 //Get Single Order, Cancel Single Order( i.e., update order_status) --Client API
 router.route("/order/:id").get(userAuthentication, inputValidator(schemas.order, 'params') ,catchAsyncError(async(req, res, next)=> {
     const order = await Order.findById(req.params.id);
-    if(order === undefined){
+    if(order === undefined || order.buyer_id !== req.user.user_id){
         return res.status(400).json({
             success: false,
-            message: "Wrong order ID"
+            message: "Order Doesn't exist for this User"
         })
-    } 
+    }
     order.address = JSON.parse(order.address)
     order.products = JSON.parse(order.products)
     res.status(200).json({
@@ -49,12 +49,12 @@ router.route("/order/:id").get(userAuthentication, inputValidator(schemas.order,
 })).patch(userAuthentication, inputValidator(schemas.order, 'params') ,catchAsyncError(async(req, res, next)=> {
     const result = await Order.updateById(req.params.id, {order_status: 0}, ['buyer_id ='+connection.escape(req.user.user_id), 'order_status = 1'] )
     if(result.changedRows === 0){
-        return res.status(200).json({
+        return res.status(400).json({
             success: false,
             message: "Invalid Request"
         })
     }
-    res.status(400).json({
+    res.status(200).json({
         success: true,
         message: "Order Cancelled Successfully"
     })
@@ -69,7 +69,9 @@ router.route("/order/new").post(userAuthentication, inputValidator(schemas.order
     for(key in orderProducts){
         productIds.push(key)
     }
-    const productsInOrder = await Product.find(['product_id', 'price'], { productIds })
+    console.log("productIds: ", productIds)
+    const productsInOrder = await Product.find(['*'], { productIds })
+    console.log("productsInOrder: ", productsInOrder)
     if(productsInOrder.length !== productIds.length){
         return res.status(400).json({ success: false, message: "One or more Invalid orderProduct"})
     }
@@ -141,6 +143,35 @@ router.route("/admin/orders").get(adminAuthentication, inputValidator(schemas.or
     });
 }));
 
-router.route("/admin/order/:id").get(adminAuthentication, getSingleOrderDetails); 
+router.route("/admin/order/:id").get(adminAuthentication, catchAsyncError( async(req, res, next)=>{
+    const dbName = 'client'+req.user.id;
+    const id = req.params.id;
+
+    const result = (await dbQuery(`select * from user_order where order_id = ${id}`, dbName));
+    if(!result[0]){
+        return res.status(404).json({
+            success: false,
+            message: "Order Not Found"
+        })
+    }
+    order = result[0];
+    const address = await dbQuery(`select address_id, street1, street2, city, zipcode from address where address_id = ${order.address_id}`, dbName);
+    delete order.address_id;
+    // order.address=address;
+    order.address = [{address_id:address[0].address_id,Line1:address[0].street1,Line2:address[0].street2,city:address[0].city,zipcode:address[0].zipcode}];
+
+    const user = await dbQuery(`select name,phone from user where user_id = ${order.buyer_id}`, dbName);
+    order.user = {user_id: order.buyer_id, name: user[0].name,phone:user[0].phone};
+    delete order.buyer_id;
+
+    const products = await dbQuery(`select order_product.product_id, order_product.quantity, order_product.price, product.product_name from order_product JOIN product ON order_product.product_id = product.product_id where order_product.order_id = ${order.order_id}`, dbName);
+    
+    order.products = products;
+
+    res.status(200).json({
+        success: true,
+        order
+    });
+})); 
 
 module.exports = router;

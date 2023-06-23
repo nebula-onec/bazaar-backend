@@ -11,6 +11,7 @@ router.route('/home').get(validateClient , catchAsyncError( async(req, res, next
     let responseObj = { success: true, };
     // filters = {product_name: 'am', category_id: 1, page: '2', product_id: Array}
     responseObj.products = await Product.find(['product_id', 'product_name', 'price', 'stock', 'images'], {page: 1})
+    responseObj.numberOfProducts = await Product.count({product_name: ''})
     responseObj.categories = await Category.find();
 
     await validateUser(req, res, next);

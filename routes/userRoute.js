@@ -1,4 +1,3 @@
-const {adminLogin, logout, homePage } = require("../controllers/userController");
 const express = require("express");
 const { adminAuthentication, validateClient, userAuthentication } = require("../middleware/auth");
 const catchAsyncError = require("../middleware/catchAsyncError");
@@ -48,7 +47,7 @@ router.route('/register').post( validateClient, inputValidator(schemas.userRegis
 router.route("/login").post( validateClient, inputValidator(schemas.loginDetails, 'body') , catchAsyncError( async(req, res, next)=> {
   
   // returns list of matched User- However If we pass email to filter User then definitely we can have atmost one User.
-  const user = (await User.find(['user_id', 'password'], {email: req['body'].email}))[0]
+  const user = (await User.find(['user_id', 'password'], {email: req.body.email}))[0]
   if(user === undefined){
     return res.status(401).json({ success: false, message: "Invalid Email, or password"});
   }

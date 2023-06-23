@@ -3,13 +3,17 @@ const { configDatabase } = require("./config/configDatabaseName");
 const connection = require("./config/database");
 const Address = require("./models/addressModel");
 
-
+configDatabase("client1")
 async function working(){
 
-    connection.query('insert into client1.user_order SET buyer_id = 4, address_id = 4, shipping_price= 10, total_price= 15000', (err, result)=> {
-        if(err) throw err;
-        console.log(result)
-    })
+    try {
+        const address = new Address({user_id: 1,street1: "vaishali Nagar", city: "Bhopal", zipcode: "462001"})
+        console.log(await address.save())
+    }
+    catch(e){
+        console.log("error thrown: Description")
+        console.error(e)
+    }
 }
 
 working()

@@ -11,11 +11,13 @@ const router = require('express').Router();
 // Get Products --Client API
 router.route("/products").get( validateClient, inputValidator(schemas.productsList, 'query') ,catchAsyncError( async(req, res)=> {
     // Query Parameters: { name: String, category: Undefined/integer, page: integer}
-    const products = await Product.find(['product_id', 'product_name', 'price', 'stock', 'images'], req.query);
+    const products = await Product.find(['product_id', 'product_name', 'price', 'stock', 'images'], {product_name: req.query.name, category_id: req.query.category, page: req.query.page});
+    const numberOfProducts = await Product.count({product_name: req.query.name, category_id: req.query.category})
 
     return res.status(200).json({
         success: true,
         products,
+        numberOfProducts,
     })
 })
 )
@@ -26,9 +28,9 @@ router.route("/product/:id").get( validateClient ,inputValidator(schemas.paramsI
     const product = await Product.findById(req.params.id);
   
     if (!product) {
-        return res.status(404).json({
+        return res.status(400).json({
             success: false,
-            message: "PRODUCT NOT FOUND"
+            message: "Product Not Found"
         });
     }
     // if(product.category_id !== null) console.log(product.category_id)
