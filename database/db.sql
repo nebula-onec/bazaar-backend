@@ -22,9 +22,10 @@ create table home(
     n_customers INT,
     n_products INT,
     unavailable_products INT,
-    n_sold INT
+    n_sold INT,
+    revenue INT
 );
-INSERT INTO home VALUES(3,5,10,2,10);
+INSERT INTO home VALUES(3,5,10,2,10,0);
 CREATE TABLE user(
 	user_id 	INT PRIMARY KEY AUTO_INCREMENT,
     name 		VARCHAR(255) NOT NULL,
@@ -61,6 +62,7 @@ CREATE TABLE product (
     description_long      varchar(1000),
     stock    		INT NOT NULL,
     images       varchar(800) NOT NULL DEFAULT "",
+    check (stock>=0),
 	CONSTRAINT product_category_id_fk FOREIGN KEY ( category_id )
         REFERENCES category ( category_id )
 		ON DELETE CASCADE ON UPDATE CASCADE

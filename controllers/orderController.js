@@ -2,45 +2,6 @@ const catchAsyncError = require("../middleware/catchAsyncError");
 const dbInsertQuery = require("../utils/dbInsertQuery");
 const dbQuery = require("../utils/dbQuery");
 
-
-exports.getOrderDetails = catchAsyncError( async(req, res, next) => {
-    const dbName = 'client'+req.user.id;
-    let totalRevenue = 0, successfulOrders = 0, pendingOrders=0;
-    const orders = await dbQuery(`select order_id, order_status, total_price from user_order `, dbName);
-
-    orders.forEach((order)=>{
-        if(order.order_status == 3) {  totalRevenue += order.total_price; successfulOrders++; }
-    });
-    pendingOrders=orders.length-successfulOrders;
-
-    const productInOrders = await dbQuery(`select order_product.*, product.product_name  from order_product JOIN product ON order_product.product_id = product.product_id`, dbName);
-
-    // productInOrders = [{order_id:1, product_id:1, quantity:5, price: 200}, {order_id:1, product_id:2, quantity:1, price:1000}
-    // ,  {order_id:2, product_id:2, quantity:3, price:1000},  {order_id:2, product_id:5, quantity:1, price:12000}];
-    const temp = new Map();
-    productInOrders.forEach((product)=>{
-        if(!temp.has(product.order_id)){
-            temp.set(product.order_id, []);
-        }
-        temp.get(product.order_id).push({product_id: product.product_id, quantity: product.quantity, price: product.price, product_name: product.product_name});
-    });
-
-    orders.forEach((order)=>{
-        order.product = temp.get(order.order_id);
-    });
-
-    // console.log(temp);
-
-    res.status(200).json({
-        success: true,
-        totalRevenue,
-        successfulOrders,
-        pendingOrders,
-        orders
-    });
-});
-
-
 exports.getSingleOrderDetails = catchAsyncError( async(req, res, next)=>{
     const dbName = 'client'+req.user.id;
     const id = req.params.id;
@@ -74,28 +35,7 @@ exports.getSingleOrderDetails = catchAsyncError( async(req, res, next)=>{
 
 
 
-exports.changeOrderStatus = catchAsyncError( async(req, res, next)=>{
-    const dbName = 'client'+req.user.id;
-    const {order_id, new_status} = req.body;
-    if(!order_id || !new_status){
-        return res.status(206).json({
-            success: false,
-            message: "Please give Full Details"
-        });
-    }
-    const order = (await dbQuery(`select order_status from user_order where order_id = ${order_id}`, dbName))[0];
-    if(order.order_status == 0 ){
-        return res.status(401).json({
-            success: false,
-            message: "Cancelled Order's Status can't be Updated"
-        });
-    }
-    const result = await dbInsertQuery(`Update user_order SET order_status = ? WHERE order_id = ?`, [new_status, order_id], dbName);
-    res.status(200).json({
-        success: true,
-        message: "Order Status Updated successfully!"
-    });
-});
+
 
 
 

@@ -10,22 +10,22 @@ const router = require('express').Router();
 router.route('/home').get(validateClient , catchAsyncError( async(req, res, next)=> {
     let responseObj = { success: true, };
     // filters = {product_name: 'am', category_id: 1, page: '2', product_id: Array}
-    responseObj.products = await Product.find(['product_id', 'product_name', 'price', 'stock', 'images'])
+    responseObj.products = await Product.find(['product_id', 'product_name', 'price', 'stock', 'images'], {page: 1})
     responseObj.categories = await Category.find();
 
     await validateUser(req, res, next);
     if(req.user !== undefined){
-        if(req.user.cart === null){
+        if(req.user.cart === null || Object.keys(req.user.cart).length===0){
             responseObj.cart={}
             responseObj.cartProducts={}
         }
         else{
             responseObj.cart = JSON.parse(req.user.cart);
-            let productsInCart = [];
+            let productIds = [];
             for(key in responseObj.cart){
-                productsInCart.push(key);
+                productIds.push(key);
             }
-            responseObj.cartProducts = await Product.find(['product_id', 'product_name', 'price', 'stock', 'images'], {product_id: productsInCart})
+            responseObj.cartProducts = await Product.find(['product_id', 'product_name', 'price', 'stock', 'images'], {productIds})
             responseObj.cartProducts.forEach((product)=>{
                 product.quantity = responseObj.cart[product.product_id]
             })

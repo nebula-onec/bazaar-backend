@@ -8,6 +8,8 @@ const bcrypt = require('bcryptjs')
 const jwt = require("jsonwebtoken");
 const MasterUser = require("../models/masterUserModel");
 const { configDatabase } = require("../config/configDatabaseName");
+const inputValidator = require("../middleware/inputValidator");
+const schemas = require("../config/JOISchemas");
 const router = express.Router();
 
 //API to test integrity of JWT Token
@@ -34,39 +36,24 @@ router.route("/wronglogin").get((req, res, next)=>{
 })
 
 // Client API's
-router.route('/register').post( validateClient, catchAsyncError( async(req, res, next)=> {
-    let user = {
-      name: req.body.name,
-      phone: req.body.phone,
-      email: req.body.email,
-      password: req.body.password
-    }
-    if(user.name === undefined || user.email === undefined || user.password === undefined){
-      return res.status(401).json({ success: false, message: "Please Enter name, Email & Password"}); 
-    }
+router.route('/register').post( validateClient, inputValidator(schemas.userRegister, 'body') ,catchAsyncError( async(req, res, next)=> {
+    req.body.password = await bcrypt.hash(req.body.password, 10);
 
-    user.password = await bcrypt.hash(user.password, 10);
-
-    const userObj = new User(user);
+    const userObj = new User(req.body);
     const {insertId} = await userObj.save();
     sendUserToken(insertId, Number(req.headers['client_id']), res);
 })
 )
 
-router.route("/login").post( validateClient,catchAsyncError( async(req, res, next)=> {
-  const { email, password} = req.body;
-    
-  if (!email || !password) {
-    return res.status(401).json({ success: false, message: "Please Enter Email & Password"});
-  }
+router.route("/login").post( validateClient, inputValidator(schemas.loginDetails, 'body') , catchAsyncError( async(req, res, next)=> {
   
   // returns list of matched User- However If we pass email to filter User then definitely we can have atmost one User.
-  const user = (await User.find(['user_id', 'password'], {email}))[0]
+  const user = (await User.find(['user_id', 'password'], {email: req['body'].email}))[0]
   if(user === undefined){
     return res.status(401).json({ success: false, message: "Invalid Email, or password"});
   }
   // 
-  const isPasswordMatched = await bcrypt.compare(password, user.password);
+  const isPasswordMatched = await bcrypt.compare(req.body.password, user.password);
   if (!isPasswordMatched) {
     return res.status(401).json({ success: false, message: "Invalid Email, or password"});
   }
@@ -88,38 +75,29 @@ router.route("/logout").get( catchAsyncError(async (req, res, next) => {
 })
 )
 
-router.route('/cart').post(userAuthentication, catchAsyncError( async(req, res, next)=> {
-  if(req.body.cart === undefined){
-      return res.status(400).json({ success: false, message: 'Invalid Request No cart Data Provided'})
-  }
-  
+router.route('/cart').post(userAuthentication, inputValidator(schemas.cartPost, 'body') ,catchAsyncError( async(req, res, next)=> {
   await User.updateById(req.user.user_id, {cart: JSON.stringify(req.body.cart)})
-
   return res.status(200).json({ success: true, message: 'Cart Updated Successfully'})
 })
 )
 
 
 //Admin Login 
-router.route("/admin/login").post(catchAsyncError( async (req, res, next) => {
+router.route("/admin/login").post( inputValidator(schemas.loginDetails, 'body') ,catchAsyncError( async (req, res, next) => {
 
-  const { email, password } = req.body;
-    
-  if (!email || !password) {
-    return res.status(401).json({ success: false, message: "Please Enter Email & Password"});
-  }
-  
   await configDatabase('master')
-  const admin = (await MasterUser.find(['*'], {email}))[0];
+  const admin = (await MasterUser.find(['*'], {email: req['body'].email}))[0];
   
   if(admin === undefined){
     return res.status(401).json({ success: false, message: "Invalid Email, or password"});
   }
 
-  if (!await bcrypt.compare(password, admin.password)) {
+  if (!await bcrypt.compare(req.body.password, admin.password)) {
     return res.status(401).json({ success: false, message: "Invalid Email, or password"});
   }
 
+
+  await configDatabase(admin.db)
   sentAdminToken(admin.admin_id, res);
 
 }));

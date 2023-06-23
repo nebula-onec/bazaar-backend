@@ -26,16 +26,17 @@ class Product{
 /*
     filters = { page: Number/Sting, product_name: String, category_id: Number/String }
 */
-Product.find = (columns=['*'], filters) => {
+Product.find = (columns=['*'], filters={}, checks={}) => {
+    console.log("filters: ", filters)
     return new Promise((resolve, reject)=> {
         const resultPerPage=10
-        let page=1
-        if(filters && filters.page && filters.page>0) page = Number(filters.page);
+        // if(filters && filters.page && filters.page>0) page = Number(filters.page);
         let query = `SELECT ${columns.join(', ')} FROM product NATURAL JOIN category WHERE 1`
-        if(filters && filters.product_name) query += ' && product_name LIKE ' + connection.escape('%' + filters.product_name + '%') ;
-        if(filters && filters.category_id)  query += ' && category_id = ' + connection.escape(filters.category_id) ;
-        if(filters && Array.isArray(filters.product_id)) query += ' && product_id IN (' + connection.escape(filters.product_id) + ')'
-        query += ' LIMIT ' + ((connection.escape(page)-1)*resultPerPage) + ',' + resultPerPage;
+        if(filters.product_name) query += ' && product_name LIKE ' + connection.escape('%' + filters.product_name + '%') ;
+        if(filters.category_id)  query += ' && category_id = ' + connection.escape(filters.category_id) ;
+        if(Array.isArray(filters.productIds)) query += ' && product_id IN (' + connection.escape(filters.productIds) + ')'
+        if(checks.stock===true) query += " && stock>0 "
+        if(filters.page) query += ' LIMIT ' + ((connection.escape(Number(filters.page))-1)*resultPerPage) + ',' + resultPerPage;
         // console.log(query);
         connection.query(query, (err, result)=> {
             if(err) reject(err);

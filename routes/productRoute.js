@@ -1,19 +1,17 @@
+const schemas = require('../config/JOISchemas');
 const { configDatabase } = require('../config/configDatabaseName');
 const { adminAuthentication, validateClient } = require('../middleware/auth');
 const catchAsyncError = require('../middleware/catchAsyncError');
+const inputValidator = require('../middleware/inputValidator');
 const Category = require('../models/categoryModel');
 const Product = require('../models/productModel');
 const cloudinary = require("cloudinary").v2;
 const router = require('express').Router();
 
 // Get Products --Client API
-router.route("/products").get( validateClient, catchAsyncError( async(req, res)=> {
-    // Query Parameters: { name: product_name, category: category_id, page}
-    const filters = {}
-    if(req.query.name) filters.product_name = req.query.name
-    if(req.query.category) filters.category_id = req.query.category
-    if(req.query.page) filters.page = req.query.page
-    const products = await Product.find(['product_id', 'product_name', 'price', 'stock', 'images'], filters);
+router.route("/products").get( validateClient, inputValidator(schemas.productsList, 'query') ,catchAsyncError( async(req, res)=> {
+    // Query Parameters: { name: String, category: Undefined/integer, page: integer}
+    const products = await Product.find(['product_id', 'product_name', 'price', 'stock', 'images'], req.query);
 
     return res.status(200).json({
         success: true,
@@ -23,7 +21,7 @@ router.route("/products").get( validateClient, catchAsyncError( async(req, res)=
 )
 
 //Get Single Product --Client API
-router.route("/product/:id").get( validateClient ,catchAsyncError( async (req, res, next) => {
+router.route("/product/:id").get( validateClient ,inputValidator(schemas.paramsId, 'params') ,catchAsyncError( async (req, res, next) => {
     
     const product = await Product.findById(req.params.id);
   
@@ -47,21 +45,7 @@ router.route("/product/:id").get( validateClient ,catchAsyncError( async (req, r
 
 
 //Create Product --Admin API 
-router.route('/admin/product/create').post(adminAuthentication, catchAsyncError( async (req, res, next) => {
-
-    let { product_name, price, category_id, description_short, description_long, stock, imageLinks} = req.body;
-
-    if(!product_name || !price || !stock){
-        return res.status(400).json({
-            success: false,
-            message: "Please give Full Details of product"
-        });
-    }
-
-    if(imageLinks === undefined) imageLinks = []
-    else if (typeof imageLinks === "string") {
-        imageLinks = [imageLinks]
-    } 
+router.route('/admin/product/create').post(adminAuthentication, inputValidator(schemas.productCreate, 'body') ,catchAsyncError( async (req, res, next) => {
 
     let images = "";
 
@@ -72,7 +56,7 @@ router.route('/admin/product/create').post(adminAuthentication, catchAsyncError(
 
 
     await configDatabase(req.admin.db);
-    const product = new Product({ product_name, price,category_id,  description_short, description_long, stock, images})
+    const product = new Product(req.body)
     await product.save()
 
     res.status(200).json({
@@ -84,10 +68,9 @@ router.route('/admin/product/create').post(adminAuthentication, catchAsyncError(
 
 
 //Delete And Update Product --Admin API
-router.route('/admin/product/:id').delete(adminAuthentication, catchAsyncError( async(req, res, next)=>{
-    const product_id = req.params.id;
+router.route('/admin/product/:id').delete(adminAuthentication, inputValidator(schemas.paramsId, 'params') ,catchAsyncError( async(req, res, next)=>{
     await configDatabase(req.admin.db);
-    const targetedProduct = await Product.findById(product_id)
+    const targetedProduct = await Product.findById(req.params.id)
     if(targetedProduct === undefined){
         return res.status(400).json({
             success: false,
@@ -102,7 +85,7 @@ router.route('/admin/product/:id').delete(adminAuthentication, catchAsyncError( 
         success: true,
         message: "Product Deleted successfully!" 
     });
-})).patch(adminAuthentication, catchAsyncError( async(req, res, next)=>{
+})).patch(adminAuthentication, inputValidator(schemas.paramsId, 'params') ,catchAsyncError( async(req, res, next)=>{
     
     const product_id = req.params.id
     let { product_name, price, category_id, description_short, description_long, stock, imageLinks} = req.body;
@@ -140,11 +123,7 @@ router.route('/admin/product/:id').delete(adminAuthentication, catchAsyncError( 
 
 
     await configDatabase(req.admin.db);
-    await Product.updateById(product_id, { product_name, price,category_id,  description_short, description_long, stock, images})
-
-    res.status(200).json({
-        success: true,
-        message: "Product Updated successfully!"
+    await Product.updateById(product_id, { product_name, price,categorydb
     });
 }))
 

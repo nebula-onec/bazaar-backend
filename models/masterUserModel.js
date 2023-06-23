@@ -4,10 +4,10 @@ class MasterUser{
 
 }
 
-MasterUser.find = (columns=['*'], filters) => {
+MasterUser.find = (columns=['*'], filters={}) => {
     return new Promise((resolve, reject)=> {
         let query = `SELECT ${columns.join(',')} FROM admin `
-        if(filters && filters.email) query += ' where email = ' + connection.escape(filters.email)
+        if(filters.email) query += ' where email = ' + connection.escape(filters.email)
         connection.query(query, (err, result)=> {
             if(err) reject(err)
             resolve(result)
