@@ -22,6 +22,14 @@ class Address{
     }
 }
 
+Address.find = (user_id)=> {
+    return new Promise((resolve, reject)=> {
+        connection.query('SELECT * FROM address WHERE user_id = ?', user_id, (err, result)=> {
+            if(err) reject(err)
+            resolve(result)
+        })
+    })
+}
 Address.findById = (id)=> {
     return new Promise((resolve, reject)=> {
         connection.query('SELECT * from address where address_id = ?', id, (err, result)=> {
