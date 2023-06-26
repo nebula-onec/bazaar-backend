@@ -33,11 +33,11 @@ Product.find = (columns=['*'], filters={}, checks={}) => {
         // if(filters && filters.page && filters.page>0) page = Number(filters.page);
         let query = `SELECT ${columns.join(', ')} FROM product LEFT JOIN category ON(product.category_id=category.category_id) WHERE 1`
         if(filters.product_name) query += ' && product_name LIKE ' + connection.escape('%' + filters.product_name + '%') ;
-        if(filters.category_id)  query += ' && category_id = ' + connection.escape(filters.category_id) ;
+        if(filters.category_id)  query += ' && category.category_id = ' + connection.escape(filters.category_id) ;
         if(Array.isArray(filters.productIds) && filters.productIds.length>0) query += ' && product_id IN (' + connection.escape(filters.productIds) + ')'
         if(checks.stock===true) query += " && stock>0 "
         if(filters.page) query += ' LIMIT ' + ((connection.escape(Number(filters.page))-1)*resultPerPage) + ',' + resultPerPage;
-        console.log("Product query: ",query);
+        // console.log("Product query: ",query);
         connection.query(query, (err, result)=> {
             if(err) reject(err);
             resolve(result);
