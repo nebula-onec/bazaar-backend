@@ -1,4 +1,5 @@
 const { adminAuthentication } = require("../middleware/auth");
+const catchAsyncError = require("../middleware/catchAsyncError");
 
 const router = require("express").Router();
 
