@@ -36,6 +36,7 @@ const schemas = {
         description_short: joi.string(),
         description_long: joi.string()
     }),
+    
     userRegister: joi.object({
         name: joi.string().pattern(/^[a-zA-Z ]+$/).required(),
         email: joi.string().email().required(),
