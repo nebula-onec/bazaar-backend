@@ -28,7 +28,7 @@ const schemas = {
         page: joi.number().integer().min(1).default(1)
     }),
     productCreate: joi.object({
-        product_name: joi.string().alphanum().min(3).max(255).required(),
+        product_name: joi.string().min(3).max(255).required(),
         price: joi.number().integer().min(10).max(1000000).required(),
         stock: joi.number().integer().min(0).required(),
         imageLinks: joi.array().items(joi.string()).default([]),
