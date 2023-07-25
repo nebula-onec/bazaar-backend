@@ -67,10 +67,12 @@ Order.count = (conditions) => {
 Order.find = (filters={})=> {
     return new Promise((resolve, reject)=> {
         const resultPerPage = 10
-        let query = "SELECT user_order.*, JSON_OBJECT('address_id' , address_id, 'street1', street1, 'street2', street2, 'city', city, 'zipcode', zipcode) as address, JSON_ARRAYAGG( JSON_OBJECT('product_id', product_id, 'product_name', product_name, 'images', images, 'quantity', quantity, 'price', order_product.price) ) as products from user_order NATURAL JOIN address NATURAL JOIN order_product JOIN product USING(product_id) "
-        if(filters.buyer_id) query += " where buyer_id = " + connection.escape(filters.buyer_id)
+        let query = "SELECT user_order.*, user.name, user.phone, JSON_OBJECT('address_id' , address_id, 'street1', street1, 'street2', street2, 'city', city, 'zipcode', zipcode) as address, JSON_ARRAYAGG( JSON_OBJECT('product_id', product_id, 'product_name', product_name, 'images', images, 'quantity', quantity, 'price', order_product.price) ) as products from user_order NATURAL JOIN address NATURAL JOIN order_product JOIN product USING(product_id) JOIN user ON buyer_id = user.user_id"
+        if(filters.buyer_id || filters.status) query+= " WHERE 1 "
+        if(filters.buyer_id) query += " && buyer_id = " + connection.escape(filters.buyer_id)
+        if(filters.status) query+= " && order_status IN (" + connection.escape(filters.status) + ")"
         query += " GROUP BY order_id ORDER BY order_date DESC " 
-        query+=" LIMIT " + connection.escape((filters.page-1)*resultPerPage) + ',' + resultPerPage
+        if(filters.page) query+=" LIMIT " + connection.escape((filters.page-1)*resultPerPage) + ',' + resultPerPage
         // console.log("Find query: ", query);
         connection.query(query, (err, result)=> {
             if(err) reject(err)
@@ -82,7 +84,7 @@ Order.find = (filters={})=> {
 // "SELECT user_order.*, JSON_OBJECT('address_id' , address_id, 'street1', street1, 'street2', street2, 'city', city, 'zipcode', zipcode) as address, JSON_ARRAYAGG( JSON_OBJECT('product_id', product_id, 'product_name', product_name, 'images', images, 'quantity', quantity, 'price', order_product.price) ) as products from user_order NATURAL JOIN address NATURAL JOIN order_product JOIN product USING(product_id) where buyer_id = 15 group by order_id"
 Order.findById = (id)=> {
     return new Promise((resolve, reject)=> {
-        let query = "SELECT user_order.*, JSON_OBJECT('address_id' , address_id, 'street1', street1, 'street2', street2, 'city', city, 'zipcode', zipcode) as address, JSON_ARRAYAGG( JSON_OBJECT('product_id', product_id, 'product_name', product_name, 'images', images, 'quantity', quantity, 'price', order_product.price) ) as products from user_order NATURAL JOIN address NATURAL JOIN order_product JOIN product USING(product_id) "
+        let query = "SELECT user_order.*, user.name, user.phone, JSON_OBJECT('address_id' , address_id, 'street1', street1, 'street2', street2, 'city', city, 'zipcode', zipcode) as address, JSON_ARRAYAGG( JSON_OBJECT('product_id', product_id, 'product_name', product_name, 'images', images, 'quantity', quantity, 'price', order_product.price) ) as products from user_order NATURAL JOIN address NATURAL JOIN order_product JOIN product USING(product_id) JOIN user ON buyer_id = user.user_id "
         query += " where order_id = " + connection.escape(id)
         query += " group by order_id " 
         connection.query(query, (err, result)=> {

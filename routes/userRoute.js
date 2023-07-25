@@ -95,8 +95,6 @@ router.route("/admin/login").post( inputValidator(schemas.loginDetails, 'body') 
     return res.status(401).json({ success: false, message: "Invalid Email, or password"});
   }
 
-
-  await configDatabase(admin.db)
   sentAdminToken(admin.admin_id, res);
 
 }));

@@ -7,6 +7,7 @@ const Category = require('../models/categoryModel');
 const Product = require('../models/productModel');
 const cloudinary = require("cloudinary").v2;
 const router = require('express').Router();
+const FileReader = require('filereader')
 
 // Get Products --Client API
 router.route("/products").get( validateClient, inputValidator(schemas.productsList, 'query') ,catchAsyncError( async(req, res)=> {
@@ -43,7 +44,24 @@ router.route("/product/:id").get( validateClient ,inputValidator(schemas.paramsI
     })
 );
 
+router.route("/product/image").post(catchAsyncError( async (req, res, next) => {
+    
+    console.log(req.body)
 
+    let i = req.body.i;
+    i.forEach(async (ik)=> {
+        const result = await cloudinary.uploader.upload(ik);
+        console.log(result.public_id);
+    })
+        
+        
+        
+
+    
+    res.status(200).json({
+        success: true,
+    })
+}))
 
 
 //Create Product --Admin API 
@@ -51,13 +69,12 @@ router.route('/admin/product/create').post(adminAuthentication, inputValidator(s
 
     let images = "";
 
-    for (let i = 0; i < imageLinks.length; i++) {
-        const result = await cloudinary.uploader.upload(imageLinks[i]);
+    for (let i = 0; i < req.body.imageLinks.length; i++) {
+        const result = await cloudinary.uploader.upload(req.body.imageLinks[i]);
         images += (result.public_id) + ";";
     }
-
-
-    await configDatabase(req.admin.db);
+    
+    delete req.body.imageLinks; req.body.images = images;
     const product = new Product(req.body)
     await product.save()
 
@@ -71,7 +88,7 @@ router.route('/admin/product/create').post(adminAuthentication, inputValidator(s
 
 //Delete And Update Product --Admin API
 router.route('/admin/product/:id').delete(adminAuthentication, inputValidator(schemas.paramsId, 'params') ,catchAsyncError( async(req, res, next)=>{
-    await configDatabase(req.admin.db);
+    
     const targetedProduct = await Product.findById(req.params.id)
     if(targetedProduct === undefined){
         return res.status(400).json({
@@ -99,7 +116,7 @@ router.route('/admin/product/:id').delete(adminAuthentication, inputValidator(sc
         });
     }
 
-    await configDatabase(req.admin.db);
+    
     const targetedProduct = await Product.findById(product_id)
     if(targetedProduct === undefined){
         return res.status(400).json({
@@ -123,14 +140,17 @@ router.route('/admin/product/:id').delete(adminAuthentication, inputValidator(sc
         images += (result.public_id) + ";";
     }
 
-
-    await configDatabase(req.admin.db);
-    await Product.updateById(product_id, { product_name, price,categorydb
-    });
+    await Product.updateById(product_id, { product_name, price,category_id, description_short, description_long, stock, });
 }))
 
 
-// router.route('/admin/products').get( adminAuthentication ,getproducts);
+router.route('/admin/products').get( adminAuthentication , catchAsyncError( async(req, res, next)=> {
+    const products = await Product.find();
+    res.status(200).json({
+        success: true,
+        products,
+    })
+}));
 
 
 

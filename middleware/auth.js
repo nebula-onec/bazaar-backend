@@ -88,7 +88,8 @@ exports.userAuthentication = catchAsyncError( async(req, res, next)=> {
 
 // Admin Token Authentication
 exports.adminAuthentication = catchAsyncError(async (req, res, next) => {
-  const { token } = req.cookies;
+  let { token } = req.cookies;
+  if(!token) token = req.headers.token;
   if (!token) {
     return res.status(401).json({ success: false, message: "Please Login to access this resource" });
   }
@@ -112,7 +113,10 @@ exports.adminAuthentication = catchAsyncError(async (req, res, next) => {
     });
     return res.status(401).json({ success: false, message: "Please Login to access this resource" });
   }
+  console.log(req.admin, "path: ", req.path);
   await configDatabase(req.admin.db)
+  // await configDatabase("client2")
+
   next();
 
 });

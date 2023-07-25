@@ -101,7 +101,7 @@ router.route("/order/new").post(userAuthentication, inputValidator(schemas.order
 
 
 router.route("/admin/changeorderstatus").post(adminAuthentication, inputValidator(schemas.orderStatus, 'body') ,catchAsyncError( async(req, res, next)=>{
-    const order = await Order.findById(req.body.order_id)
+    let order = await Order.findById(req.body.order_id)
     if(order === undefined ){
         return res.status(401).json({
             success: false,
@@ -121,25 +121,27 @@ router.route("/admin/changeorderstatus").post(adminAuthentication, inputValidato
             message: "Invalid Request"
         })
     }
+    order = await Order.findById(req.body.order_id)
     res.status(200).json({
         success: true,
-        message: "Order Status Updated successfully!"
+        message: "Order Status Updated successfully!",
+        order,
     });
 }));
 
 //Create Order -- Admin API
-router.route("/admin/orders").get(adminAuthentication, inputValidator(schemas.orderList, 'query') ,catchAsyncError( async(req, res, next) => {
+router.route("/admin/orders").get(adminAuthentication ,catchAsyncError( async(req, res, next) => {
     let totalRevenue = 25600000
-    const orders = await Order.find({page: req.query.page})
-    const pendingOrders = await Order.count(['(order_status = 1 || order_status = 2)'])
-    const successfulOrders = await Order.count(['order_status = 3'])
+    const orders = await Order.find()
+    // const pendingOrders = await Order.count(['(order_status = 1 || order_status = 2)'])
+    // const successfulOrders = await Order.count(['order_status = 3'])
     
     res.status(200).json({
         success: true,
         totalRevenue,
-        successfulOrders,
-        pendingOrders,
-        orders
+        // successfulOrders,
+        // pendingOrders,
+        orders,
     });
 }));
 
