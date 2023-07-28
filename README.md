@@ -1,123 +1,65 @@
-# Bazaar-Backend
-**Bazaar** - A system that provide platform to the seller who wants to turn their offline Shop into online marketplace. It enables sellers to setup their store online, and make their store live with their own store’s application ready in a short time.
+# Open Network for E-Commerce (ONEC) 👜
+### A platform for creation and management of ecommerce stores (online) with the seller's own branding.
 
-# REST API
+<hr>
 
-The REST API to the Bazaar app is described below.
+## Features 🚀
+- Unlike a conventional platform where seller works under one brand, there is unique store for each seller.
+- Seller can manage sales from Android App.
+- End to End integration of seller's dashboard and each store instance in database.
 
-## ADMIN API
-## Login Admin
-    POST  https://bazaar-backend.onrender.com/api/admin/login
-    
-Request Body
-| Field | Type | Availabality |
-| :---  | :--- | :--- |
-| email | String | Mandatory |
-| password | String | Mandatory | 
+---
 
-Response
-| Status Code | Json Response |
-| :------- | :----- |
-| 401 | <pre> { <br> &emsp; "success": false,<br> &emsp; "message":"Invalid Email or Password" <br> }</pre> |
-| 200 | <pre> { <br> &emsp; "success": true,<br> &emsp; "message":"Login Successfully" <br> }</pre> |
+## Technologies used 🛠️
 
+- Node.js
+- MySQL
+- Express.js
+- JWT
+- React
+- React Native
+- React Native Paper
 
-## Create Product
-    POST  https://bazaar-backend.onrender.com/api/admin/product/create
-    
-Request Body
-| Field | Type | Availabality |
-| :---  | :--- | :--- |
-| product_name | String | Mandatory |
-| price | Number | Mandatory | 
-| category_id | Number | Optional |
-| description_short | String | Optional | 
-| description_long | String | Optional |
-| stock | Number | Mandatory | 
-| imageLinks | String | Optional | 
+---
+
+<br>
+This Project is separated into 3 repos. This repo is the top level repo that houses the Backend Module that will handle request from all platforms .
+It is built with NodeJS, ExpressJS, MySQL as a DataBase. 
+Overall, the project is very similar to shopify's architecture.
+
+The other two repos are:
+1. [Bazaar-android](https://github.com/adarsh-rawat/bazaar): houses the Frotend for Admin View.
+2. [Bazaar- Web](https://github.com/Mit2561/Bazzar-web): consists of both fronted+backend for public view (or customer's view).
 
 
-Response
-| Status Code | Json Response |
-| :------- | :----- |
-|  401 | <pre> { <br> &emsp; "success": false,<br> &emsp; "message":"Please Login to access this resource" <br> }</pre> |
-|  400 | <pre> { <br> &emsp; "success": false,<br> &emsp; "message":"Please give Full Details of product" <br> }</pre> |
-| 200 | <pre> { <br> &emsp; "success": true,<br> &emsp; "message":"Product Created successfully!" <br> }</pre> |
+---
 
+## A Quick Look at Admin View
+<div style="display: flex; flex-direction: row" fload="left">
+  <img src="https://res.cloudinary.com/dqzedyrjd/image/upload/v1690502204/frame2_fncoha.webp" width= "270px">
+  <img src="https://res.cloudinary.com/dqzedyrjd/image/upload/v1690502204/frame1_u9y9j4.webp" width="260px">
+  <img src="https://res.cloudinary.com/dqzedyrjd/image/upload/v1690502204/frame3_cvlpzd.webp" width= "270px">
+</div>
 
+---
 
-## Update Product
-    PATCH  https://bazaar-backend.onrender.com/api/admin/product/:id
-    
-Request Body
-| Field | Type | Availabality |
-| :---  | :--- | :--- |
-| product_name | String | Mandatory |
-| price | Number | Mandatory | 
-| category_id | Number | Optional |
-| description_short | String | Optional | 
-| description_long | String | Optional |
-| stock | Number | Mandatory | 
-| imageLinks | String | Optional | 
+## Roadmap
 
+- [x] Design Architecture and rules
+- [x] Complete end-to-end integration of Seller's View and Customer's View
+- [x] Test the Android App for Admin's View
+- [ ] Publish the Backend on Cloud
+- [ ] Publish the Android App for Admin's View
 
-Response
-| Status Code | Json Response |
-| :------- | :----- |
-|  401 | <pre> { <br> &emsp; "success": false,<br> &emsp; "message":"Please Login to access this resource" <br> }</pre> |
-|  400 | <pre> { <br> &emsp; "success": false,<br> &emsp; "message":"Please give Full Details of product" <br> }</pre> |
-|  400 | <pre> { <br> &emsp; "success": false,<br> &emsp; "message":"Invalid ID" <br> }</pre> |
-| 200 | <pre> { <br> &emsp; "success": true,<br> &emsp; "message":"Product Updated successfully!" <br> }</pre> |
+--- 
+### Contributors:
 
+![image](https://github.com/adarsh-rawat/bazaar/assets/43747987/20c6e3b3-2e86-48da-b0ea-c2e06dc6411c)
 
-
-## Delete Product
-    DELETE  https://bazaar-backend.onrender.com/api/admin/product/:id
-    
-
-Response
-| Status Code | Json Response |
-| :------- | :----- |
-|  401 | <pre> { <br> &emsp; "success": false,<br> &emsp; "message":"Please Login to access this resource" <br> }</pre> |
-|  400 | <pre> { <br> &emsp; "success": false,<br> &emsp; "message":"Invalid ID" <br> }</pre> |
-| 200 | <pre> { <br> &emsp; "success": true,<br> &emsp; "message":"Product Deleted successfully!" <br> }</pre> |
-
-
-
-## Logout Admin
-    GET  https://bazaar-backend.onrender.com/api/admin/logout 
-
-Response  ( Set token header to null ) 
-| Status Code | Json Response |
-| :------- | :----- |
-|  200 | <pre> { <br> &emsp; "success": true,<br> &emsp; "message":"Logged Out" <br> }</pre> |
-
-
-
-## CLIENT API
-
-## Register User
-    POST  https://bazaar-backend.onrender.com/api/register
-    
-    
-Request Header
-| client_id | 1 |
-| :--- | :---- |
-
-Request Body
-| Field | Type | Availabality |
-| :---  | :--- | :--- |
-| name | String | Mandatory |
-| phone | String | optional | 
-| email | String | Mandatory |
-| password | String | Mandatory | 
-
-Response
-| Status Code | Json Response |
-| :------- | :----- |
-| 401 | <pre> { <br> &emsp; "success": false,<br> &emsp; "message":"Invalid Email or Password" <br> }</pre> |
-| 200 | <pre> { <br> &emsp; "success": true,<br> &emsp; "message":"Login Successfully" <br> }</pre> |
-
-
-
-
+--- 
+## Contact
+Feel free to reach out for any query or a quick chat.
+Dipanshu: [@dipanshuj](https://github.com/DipanshuJ/) | [LinkedIn](https://www.linkedin.com/in/dipanshu-jain-5b90aa228/) <br><br>
+Adarsh: [@adarsh-rawat](https://github.com/adarsh-rawat) | [LinkedIn](https://www.linkedin.com/in/rawat-adarsh/) <br><br>
+Meet: [@mit2561](https://github.com/mit2561) | [LinkedIn](https://www.linkedin.com/in/patel-mit25/) <br><br>
+Rajat: [@rajat8658](https://github.com/rajat8658) | [LinkedIn](https://www.linkedin.com/in/rajatmoharana/)<br>
